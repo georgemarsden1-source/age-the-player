@@ -54,17 +54,18 @@ export default function Game() {
   return (
     <div className="min-h-screen w-full flex flex-col items-center justify-center p-4 relative overflow-hidden bg-black text-foreground">
       
-      <div className="absolute top-0 left-0 right-0 p-4 md:p-6 z-20 flex justify-between items-center bg-gradient-to-b from-background to-transparent">
-        <div className="flex items-center gap-2">
-          <Badge variant="outline" className="text-lg py-1 px-3 border-white/30 text-white bg-white/10">
-            Round {currentRound + 1}/{players.length}
-          </Badge>
+      <div className="absolute top-0 left-0 right-0 p-4 md:p-6 z-20 flex justify-between items-center bg-gradient-to-b from-black to-transparent">
+        <div className="flex items-center gap-1">
+          <span className="text-sm text-white/70 uppercase tracking-wider font-semibold">Round</span>
+          <span className="text-2xl font-display font-bold text-white">
+            {currentRound + 1}/{players.length}
+          </span>
         </div>
-        <div className="flex items-center gap-2">
-           <div className="text-sm text-muted-foreground uppercase tracking-wider font-semibold">Total Score</div>
-           <div className="text-2xl font-display font-bold text-white">
+        <div className="flex items-center gap-1">
+           <span className="text-sm text-white/70 uppercase tracking-wider font-semibold">Total Score</span>
+           <span className="text-2xl font-display font-bold text-white">
              {guesses.reduce((acc, curr) => acc + curr.points, 0)} pts
-           </div>
+           </span>
         </div>
       </div>
 
@@ -74,28 +75,32 @@ export default function Game() {
         
         <motion.div 
           key={player.id}
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="relative w-full aspect-[3/4] md:aspect-[4/5] max-h-[50vh] rounded-2xl overflow-hidden shadow-2xl border-4 border-white/5 group"
+          className="w-full bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10"
         >
-           <img 
-            src={player.imageUrl || defaultPlayerImg} 
-            alt={player.name} 
-            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-90" />
-          
-          <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
-            <div className="flex items-center gap-2 mb-2">
-               <span className="px-2 py-1 bg-primary text-primary-foreground text-xs font-bold uppercase tracking-widest rounded-sm">
-                 {player.team && player.team !== 'Unknown' ? player.team : player.nationality}
-               </span>
+          <div className="flex items-center gap-5">
+            <div className="relative flex-shrink-0">
+              <div className="w-28 h-28 md:w-32 md:h-32 rounded-xl overflow-hidden border-3 border-white/20 shadow-xl">
+                <img 
+                  src={player.imageUrl || defaultPlayerImg} 
+                  alt={player.name} 
+                  className="w-full h-full object-cover"
+                />
+              </div>
             </div>
-            <h2 className="text-4xl md:text-5xl font-display font-bold text-white uppercase leading-none drop-shadow-lg">
-              {player.name}
-            </h2>
-            <p className="text-sm text-muted-foreground mt-1">{player.position}</p>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="px-2 py-1 bg-secondary text-white text-xs font-bold uppercase tracking-wider rounded">
+                  {player.team && player.team !== 'Unknown' ? player.team : player.nationality}
+                </span>
+              </div>
+              <h2 className="text-3xl md:text-4xl font-display font-bold text-white uppercase leading-tight truncate">
+                {player.name}
+              </h2>
+              <p className="text-white/60 text-sm mt-1">{player.position}</p>
+            </div>
           </div>
         </motion.div>
 
@@ -110,11 +115,11 @@ export default function Game() {
             >
               <div className="space-y-6">
                 <div className="flex justify-between items-end">
-                  <label className="text-sm font-medium text-muted-foreground uppercase tracking-widest">
+                  <label className="text-sm font-semibold text-white uppercase tracking-widest">
                     Guess Age
                   </label>
-                  <span className="text-4xl font-display font-bold text-primary">
-                    {age} <span className="text-lg text-muted-foreground font-sans font-normal">years</span>
+                  <span className="text-5xl font-display font-bold text-white">
+                    {age} <span className="text-lg text-white/60 font-sans font-normal">years</span>
                   </span>
                 </div>
                 
@@ -124,13 +129,13 @@ export default function Game() {
                   min={16}
                   max={45}
                   step={1}
-                  className="py-4"
+                  className="py-6"
                   data-testid="slider-age"
                 />
 
                 <Button 
                   onClick={handleSubmit} 
-                  className="w-full text-xl py-6 font-display uppercase tracking-widest bg-primary text-primary-foreground hover:bg-primary/90 transition-all"
+                  className="w-full text-xl py-6 font-display uppercase tracking-widest bg-secondary text-white hover:bg-secondary/90 transition-all border-2 border-white/20"
                   data-testid="button-submit-guess"
                 >
                   Submit Guess
