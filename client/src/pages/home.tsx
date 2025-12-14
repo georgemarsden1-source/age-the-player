@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { Trophy, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
-import bgImage from '@assets/generated_images/dark_atmospheric_football_stadium_background.png';
+import bgImage from '@assets/stock_images/emirates_stadium_ars_f0d946a0.jpg';
 import { toast } from 'sonner';
 
 export default function Home() {
