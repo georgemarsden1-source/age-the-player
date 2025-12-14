@@ -31,34 +31,34 @@
 }
 
 :root {
-  /* Dark Sports Theme */
-  --background: 222 47% 11%; /* Deep Navy/Black */
-  --foreground: 0 0% 98%;
+  /* Blue, Red, White Theme with Yellow Accents */
+  --background: 240 100% 4%; /* Very dark blue-black */
+  --foreground: 0 0% 98%; /* White */
 
-  --card: 222 47% 13%;
+  --card: 240 60% 8%; /* Dark blue card */
   --card-foreground: 0 0% 98%;
 
-  --popover: 222 47% 11%;
+  --popover: 240 60% 8%;
   --popover-foreground: 0 0% 98%;
 
-  --primary: 84 100% 50%; /* Electric Lime */
-  --primary-foreground: 222 47% 11%;
+  --primary: 240 100% 36%; /* Blue #0000b6 */
+  --primary-foreground: 0 0% 98%;
 
-  --secondary: 217 33% 17%;
+  --secondary: 357 100% 44%; /* Red #df000c */
   --secondary-foreground: 0 0% 98%;
 
-  --muted: 217 33% 17%;
-  --muted-foreground: 215 20% 65%;
+  --muted: 240 30% 15%;
+  --muted-foreground: 240 10% 65%;
 
-  --accent: 84 100% 50%;
-  --accent-foreground: 222 47% 11%;
+  --accent: 56 100% 48%; /* Yellow #f3e100 */
+  --accent-foreground: 240 100% 4%;
 
-  --destructive: 0 62.8% 30.6%;
+  --destructive: 357 100% 44%; /* Red */
   --destructive-foreground: 0 0% 98%;
 
-  --border: 217 33% 20%;
-  --input: 217 33% 20%;
-  --ring: 84 100% 50%;
+  --border: 240 30% 20%;
+  --input: 240 30% 20%;
+  --ring: 56 100% 48%; /* Yellow for focus rings */
 
   --radius: 0.5rem;
 }
