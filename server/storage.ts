@@ -1,6 +1,6 @@
 import { drizzle } from "drizzle-orm/node-postgres";
 import pg from "pg";
-import { eq, desc, sql } from "drizzle-orm";
+import { eq, asc, sql } from "drizzle-orm";
 import { 
   type User, 
   type InsertUser,
@@ -80,7 +80,7 @@ export class DatabaseStorage implements IStorage {
     return await db
       .select()
       .from(scores)
-      .orderBy(desc(scores.totalScore))
+      .orderBy(asc(scores.totalScore))
       .limit(limit);
   }
 }
