@@ -17,15 +17,16 @@ export interface Player {
   team: string;
 }
 
+// Data sourced from Transfermarkt (December 2025)
 export const PLAYERS: Player[] = [
-  { id: 1, name: "Thiago Silva", age: 24, image: p1, team: "Rio FC" },
-  { id: 2, name: "Luka Modric-Style", age: 29, image: p2, team: "Zagreb Dinamo" },
-  { id: 3, name: "Antoine Griezmann-Look", age: 31, image: p3, team: "Paris Elite" },
-  { id: 4, name: "Erling Haaland-Esq", age: 22, image: p4, team: "Nordic Storm" },
-  { id: 5, name: "Harry Kane-Like", age: 27, image: p5, team: "London Spurs" },
-  { id: 6, name: "Pedri Gonzalez-Type", age: 19, image: p6, team: "Catalonia FC" },
-  { id: 7, name: "Kevin De Bruyne-ish", age: 33, image: p7, team: "Manchester Blue" },
-  { id: 8, name: "Son Heung-min-Vibe", age: 26, image: p8, team: "Seoul FC" },
-  { id: 9, name: "Kylian Mbappé-Aura", age: 21, image: p9, team: "France United" },
-  { id: 10, name: "Robert Lewandowski-Feel", age: 28, image: p10, team: "Warsaw Eagles" },
+  { id: 1, name: "Lionel Messi", age: 37, image: p1, team: "Inter Miami" },
+  { id: 2, name: "Erling Haaland", age: 24, image: p2, team: "Manchester City" },
+  { id: 3, name: "Antoine Griezmann", age: 34, image: p3, team: "Atlético de Madrid" },
+  { id: 4, name: "Kylian Mbappé", age: 26, image: p4, team: "Real Madrid" },
+  { id: 5, name: "Harry Kane", age: 31, image: p5, team: "Bayern Munich" },
+  { id: 6, name: "Jude Bellingham", age: 22, image: p6, team: "Real Madrid" },
+  { id: 7, name: "Kevin De Bruyne", age: 34, image: p7, team: "Manchester City" },
+  { id: 8, name: "Vinicius Junior", age: 25, image: p8, team: "Real Madrid" },
+  { id: 9, name: "Mohamed Salah", age: 32, image: p9, team: "Liverpool" },
+  { id: 10, name: "Robert Lewandowski", age: 36, image: p10, team: "FC Barcelona" },
 ];
