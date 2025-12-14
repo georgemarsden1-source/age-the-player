@@ -1,15 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useLocation } from 'wouter';
 import { useGameStore } from '@/lib/store';
-import { PLAYERS } from '@/lib/game-data';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
-import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Timer, CheckCircle2, AlertCircle, ArrowRight } from 'lucide-react';
+import { CheckCircle2, AlertCircle, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import bgImage from '@assets/generated_images/dark_atmospheric_football_stadium_background.png';
+import defaultPlayerImg from '@assets/stock_images/professional_soccer__d8d58f8f.jpg';
 
 export default function Game() {
   const [, setLocation] = useLocation();
@@ -18,25 +17,24 @@ export default function Game() {
     status, 
     submitGuess, 
     nextRound, 
-    guesses 
+    guesses,
+    players 
   } = useGameStore();
 
   const [age, setAge] = useState(25);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const player = PLAYERS[currentRound];
+  const player = players[currentRound];
   const lastGuess = guesses[guesses.length - 1];
 
-  // Redirect if game hasn't started
   useEffect(() => {
-    if (status === 'idle') {
+    if (status === 'idle' || status === 'loading' || players.length === 0) {
       setLocation('/');
     } else if (status === 'finished') {
       setLocation('/results');
     }
-  }, [status, setLocation]);
+  }, [status, players, setLocation]);
 
-  // Reset slider on new round
   useEffect(() => {
     setAge(25);
   }, [currentRound]);
@@ -45,7 +43,7 @@ export default function Game() {
     if (isSubmitting) return;
     setIsSubmitting(true);
     submitGuess(age);
-    setTimeout(() => setIsSubmitting(false), 500); // Prevent double clicks
+    setTimeout(() => setIsSubmitting(false), 500);
   };
 
   const handleNext = () => {
@@ -56,17 +54,15 @@ export default function Game() {
 
   return (
     <div className="min-h-screen w-full flex flex-col items-center justify-center p-4 relative overflow-hidden bg-background text-foreground">
-       {/* Background */}
-       <div 
+      <div 
         className="absolute inset-0 z-0 bg-cover bg-center opacity-20"
         style={{ backgroundImage: `url(${bgImage})` }}
       />
       
-      {/* Game Header */}
       <div className="absolute top-0 left-0 right-0 p-4 md:p-6 z-20 flex justify-between items-center bg-gradient-to-b from-background to-transparent">
         <div className="flex items-center gap-2">
           <Badge variant="outline" className="text-lg py-1 px-3 border-primary/50 text-primary bg-primary/10">
-            Round {currentRound + 1}/{PLAYERS.length}
+            Round {currentRound + 1}/{players.length}
           </Badge>
         </div>
         <div className="flex items-center gap-2">
@@ -77,12 +73,10 @@ export default function Game() {
         </div>
       </div>
 
-      <Progress value={((currentRound) / PLAYERS.length) * 100} className="absolute top-0 left-0 right-0 h-1 z-30 rounded-none bg-white/10" />
+      <Progress value={((currentRound) / players.length) * 100} className="absolute top-0 left-0 right-0 h-1 z-30 rounded-none bg-white/10" />
 
-      {/* Main Content */}
       <div className="w-full max-w-lg z-10 flex flex-col items-center gap-6 mt-12 md:mt-0">
         
-        {/* Player Card */}
         <motion.div 
           key={player.id}
           initial={{ opacity: 0, scale: 0.9 }}
@@ -91,7 +85,7 @@ export default function Game() {
           className="relative w-full aspect-[3/4] md:aspect-[4/5] max-h-[50vh] rounded-2xl overflow-hidden shadow-2xl border-4 border-white/5 group"
         >
            <img 
-            src={player.image} 
+            src={player.imageUrl || defaultPlayerImg} 
             alt={player.name} 
             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
           />
@@ -100,16 +94,16 @@ export default function Game() {
           <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
             <div className="flex items-center gap-2 mb-2">
                <span className="px-2 py-1 bg-primary text-primary-foreground text-xs font-bold uppercase tracking-widest rounded-sm">
-                 {player.team}
+                 {player.team || player.nationality}
                </span>
             </div>
             <h2 className="text-4xl md:text-5xl font-display font-bold text-white uppercase leading-none drop-shadow-lg">
               {player.name}
             </h2>
+            <p className="text-sm text-muted-foreground mt-1">{player.position}</p>
           </div>
         </motion.div>
 
-        {/* Controls */}
         <AnimatePresence mode="wait">
           {status === 'playing' ? (
             <motion.div 
@@ -155,7 +149,6 @@ export default function Game() {
               animate={{ opacity: 1, scale: 1 }}
               className="w-full bg-card/95 backdrop-blur-xl border border-primary/20 rounded-xl p-6 shadow-2xl relative overflow-hidden"
             >
-               {/* Feedback Content */}
                <div className="text-center space-y-4 relative z-10">
                  <div className="flex flex-col items-center">
                     {lastGuess?.points === 0 ? (

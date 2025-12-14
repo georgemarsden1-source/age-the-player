@@ -1,112 +1,90 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-import { PLAYERS } from './game-data';
+import type { Player } from '@shared/schema';
 
-export type GameStatus = 'idle' | 'playing' | 'round-feedback' | 'finished';
+export type GameStatus = 'idle' | 'loading' | 'playing' | 'round-feedback' | 'finished';
 
 export interface GuessResult {
   round: number;
   playerId: number;
+  playerName: string;
   guess: number;
   actual: number;
   points: number;
 }
 
-export interface LeaderboardEntry {
-  name: string;
-  score: number;
-  date: string;
-}
-
 interface GameState {
   playerName: string;
+  players: Player[];
   currentRound: number;
   totalScore: number;
   guesses: GuessResult[];
   status: GameStatus;
-  leaderboard: LeaderboardEntry[];
   
+  setPlayers: (players: Player[]) => void;
   startGame: (name: string) => void;
   submitGuess: (age: number) => void;
   nextRound: () => void;
   resetGame: () => void;
 }
 
-export const useGameStore = create<GameState>()(
-  persist(
-    (set, get) => ({
-      playerName: '',
-      currentRound: 0,
-      totalScore: 0,
-      guesses: [],
-      status: 'idle',
-      leaderboard: [],
+export const useGameStore = create<GameState>((set, get) => ({
+  playerName: '',
+  players: [],
+  currentRound: 0,
+  totalScore: 0,
+  guesses: [],
+  status: 'idle',
 
-      startGame: (name: string) => set({ 
-        playerName: name, 
-        currentRound: 0, 
-        totalScore: 0, 
-        guesses: [], 
-        status: 'playing' 
-      }),
+  setPlayers: (players: Player[]) => set({ players, status: 'playing' }),
 
-      submitGuess: (age: number) => {
-        const { currentRound, totalScore, guesses } = get();
-        const currentPlayer = PLAYERS[currentRound];
-        const diff = Math.abs(age - currentPlayer.age);
-        const points = diff;
-        
-        set({
-          guesses: [...guesses, {
-            round: currentRound,
-            playerId: currentPlayer.id,
-            guess: age,
-            actual: currentPlayer.age,
-            points
-          }],
-          totalScore: totalScore + points,
-          status: 'round-feedback'
-        });
-      },
+  startGame: (name: string) => set({ 
+    playerName: name, 
+    currentRound: 0, 
+    totalScore: 0, 
+    guesses: [], 
+    status: 'loading' 
+  }),
 
-      nextRound: () => {
-        const { currentRound, totalScore, playerName } = get();
-        if (currentRound >= PLAYERS.length - 1) {
-          // Game Finished - Update Leaderboard
-          const newEntry: LeaderboardEntry = {
-            name: playerName,
-            score: totalScore,
-            date: new Date().toISOString()
-          };
-          
-          const currentLeaderboard = get().leaderboard;
-          const newLeaderboard = [...currentLeaderboard, newEntry]
-            .sort((a, b) => a.score - b.score) // Sort by lowest score
-            .slice(0, 10); // Keep top 10
+  submitGuess: (age: number) => {
+    const { currentRound, totalScore, guesses, players } = get();
+    const currentPlayer = players[currentRound];
+    if (!currentPlayer) return;
+    
+    const diff = Math.abs(age - currentPlayer.age);
+    const points = diff;
+    
+    set({
+      guesses: [...guesses, {
+        round: currentRound,
+        playerId: currentPlayer.id,
+        playerName: currentPlayer.name,
+        guess: age,
+        actual: currentPlayer.age,
+        points
+      }],
+      totalScore: totalScore + points,
+      status: 'round-feedback'
+    });
+  },
 
-          set({ 
-            status: 'finished',
-            leaderboard: newLeaderboard
-          });
-        } else {
-          set({ 
-            currentRound: currentRound + 1,
-            status: 'playing'
-          });
-        }
-      },
-
-      resetGame: () => set({
-        playerName: '',
-        currentRound: 0,
-        totalScore: 0,
-        guesses: [],
-        status: 'idle'
-      })
-    }),
-    {
-      name: 'football-quiz-storage', // name of the item in the storage (must be unique)
-      partialize: (state) => ({ leaderboard: state.leaderboard }), // Only persist leaderboard
+  nextRound: () => {
+    const { currentRound, players } = get();
+    if (currentRound >= players.length - 1) {
+      set({ status: 'finished' });
+    } else {
+      set({ 
+        currentRound: currentRound + 1,
+        status: 'playing'
+      });
     }
-  )
-);
+  },
+
+  resetGame: () => set({
+    playerName: '',
+    players: [],
+    currentRound: 0,
+    totalScore: 0,
+    guesses: [],
+    status: 'idle'
+  })
+}));

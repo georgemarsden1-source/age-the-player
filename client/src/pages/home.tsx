@@ -1,29 +1,40 @@
 import { useState } from 'react';
 import { useLocation } from 'wouter';
 import { useGameStore } from '@/lib/store';
+import { getRandomPlayers } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { Trophy, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import bgImage from '@assets/generated_images/dark_atmospheric_football_stadium_background.png';
+import { toast } from 'sonner';
 
 export default function Home() {
   const [name, setName] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const [, setLocation] = useLocation();
-  const startGame = useGameStore(state => state.startGame);
+  const { startGame, setPlayers } = useGameStore();
 
-  const handleStart = (e: React.FormEvent) => {
+  const handleStart = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (name.trim()) {
-      startGame(name);
-      setLocation('/game');
+    if (name.trim() && !isLoading) {
+      setIsLoading(true);
+      try {
+        startGame(name);
+        const players = await getRandomPlayers(10);
+        setPlayers(players);
+        setLocation('/game');
+      } catch (error) {
+        console.error('Failed to fetch players:', error);
+        toast.error('Failed to load players. Please try again.');
+        setIsLoading(false);
+      }
     }
   };
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center p-4 relative overflow-hidden bg-background">
-      {/* Background Image with Overlay */}
       <div 
         className="absolute inset-0 z-0 bg-cover bg-center opacity-40"
         style={{ backgroundImage: `url(${bgImage})` }}
@@ -65,23 +76,24 @@ export default function Home() {
                   className="bg-background/50 border-white/10 text-lg py-6 focus-visible:ring-primary"
                   data-testid="input-player-name"
                   autoFocus
+                  disabled={isLoading}
                 />
               </div>
               
               <Button 
                 type="submit" 
                 className="w-full text-xl py-6 font-display uppercase tracking-widest bg-primary text-primary-foreground hover:bg-primary/90 transition-all hover:scale-[1.02]"
-                disabled={!name.trim()}
+                disabled={!name.trim() || isLoading}
                 data-testid="button-start-game"
               >
-                Kick Off <ArrowRight className="ml-2 w-5 h-5" />
+                {isLoading ? 'Loading...' : 'Kick Off'} <ArrowRight className="ml-2 w-5 h-5" />
               </Button>
             </form>
           </div>
         </Card>
         
         <div className="mt-8 text-center text-xs text-muted-foreground/60 uppercase tracking-widest">
-          Version 1.0 • 10 Rounds
+          200+ Players • Global Leaderboard
         </div>
       </motion.div>
     </div>
