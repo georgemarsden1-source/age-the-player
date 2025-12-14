@@ -4,7 +4,7 @@ import { useGameStore } from '@/lib/store';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { Progress } from '@/components/ui/progress';
-import { CheckCircle2, AlertCircle, ArrowRight } from 'lucide-react';
+import { CheckCircle2, AlertCircle, ArrowRight, User } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import defaultPlayerImg from '@assets/stock_images/professional_soccer__d8d58f8f.jpg';
 
@@ -12,19 +12,22 @@ export default function Game() {
   const [, setLocation] = useLocation();
   const { 
     currentRound, 
+    currentPlayerIndex,
     status, 
-    submitAllGuesses, 
+    submitCurrentPlayerGuess, 
     nextRound, 
     roundResults,
     footballers,
     humanPlayers,
-    currentRoundGuesses,
-    setGuess,
+    currentGuessValue,
+    setCurrentGuess,
     playerScores
   } = useGameStore();
 
   const footballer = footballers[currentRound];
   const lastRoundResult = roundResults[roundResults.length - 1];
+  const currentPlayer = humanPlayers[currentPlayerIndex];
+  const isLastPlayer = currentPlayerIndex === humanPlayers.length - 1;
 
   useEffect(() => {
     if (status === 'idle' || status === 'loading' || footballers.length === 0) {
@@ -35,7 +38,7 @@ export default function Game() {
   }, [status, footballers, setLocation]);
 
   const handleSubmit = () => {
-    submitAllGuesses();
+    submitCurrentPlayerGuess();
   };
 
   const handleNext = () => {
@@ -43,8 +46,6 @@ export default function Game() {
   };
 
   if (!footballer) return null;
-
-  const totalScore = Object.values(playerScores).reduce((sum, s) => sum + s, 0);
 
   return (
     <div className="min-h-screen w-full flex flex-col items-center justify-center p-4 relative overflow-hidden bg-black text-foreground">
@@ -106,43 +107,60 @@ export default function Game() {
         <AnimatePresence mode="wait">
           {status === 'playing' ? (
             <motion.div 
-              key="controls"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
+              key={`controls-${currentPlayerIndex}`}
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -50 }}
               className="w-full bg-card/80 backdrop-blur-md border border-white/10 rounded-xl p-6 shadow-xl"
             >
               <div className="space-y-6">
-                {humanPlayers.map((player, idx) => (
-                  <div key={player} className="space-y-3">
-                    <div className="flex justify-between items-end">
-                      <label className="text-sm font-semibold text-white uppercase tracking-widest">
-                        {player}
-                      </label>
-                      <span className="text-3xl font-display font-bold text-white">
-                        {currentRoundGuesses[player] ?? 25} <span className="text-sm text-white/60 font-sans font-normal">years</span>
-                      </span>
-                    </div>
-                    
-                    <Slider
-                      value={[currentRoundGuesses[player] ?? 25]}
-                      onValueChange={(vals) => setGuess(player, vals[0])}
-                      min={16}
-                      max={45}
-                      step={1}
-                      className="py-4"
-                      data-testid={`slider-age-${idx}`}
-                    />
+                <div className="flex items-center justify-center gap-3 pb-4 border-b border-white/10">
+                  <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
+                    <User className="w-5 h-5 text-primary" />
                   </div>
-                ))}
+                  <div className="text-center">
+                    <p className="text-xs text-white/50 uppercase tracking-wider">Your Turn</p>
+                    <p className="text-2xl font-display font-bold text-white uppercase">{currentPlayer}</p>
+                  </div>
+                </div>
+
+                <div className="flex justify-between items-end">
+                  <label className="text-sm font-semibold text-white uppercase tracking-widest">
+                    Guess Age
+                  </label>
+                  <span className="text-5xl font-display font-bold text-white">
+                    {currentGuessValue} <span className="text-lg text-white/60 font-sans font-normal">years</span>
+                  </span>
+                </div>
+                
+                <Slider
+                  value={[currentGuessValue]}
+                  onValueChange={(vals) => setCurrentGuess(vals[0])}
+                  min={16}
+                  max={45}
+                  step={1}
+                  className="py-6"
+                  data-testid="slider-age"
+                />
 
                 <Button 
                   onClick={handleSubmit} 
                   className="w-full text-xl py-6 font-display uppercase tracking-widest bg-secondary text-white hover:bg-secondary/90 transition-all border-2 border-white/20"
                   data-testid="button-submit-guess"
                 >
-                  Submit Guesses
+                  {isLastPlayer ? 'Submit & See Results' : 'Submit & Next Player'}
                 </Button>
+
+                {humanPlayers.length > 1 && (
+                  <div className="flex justify-center gap-2">
+                    {humanPlayers.map((_, idx) => (
+                      <div 
+                        key={idx}
+                        className={`w-2 h-2 rounded-full ${idx === currentPlayerIndex ? 'bg-primary' : idx < currentPlayerIndex ? 'bg-green-500' : 'bg-white/20'}`}
+                      />
+                    ))}
+                  </div>
+                )}
               </div>
             </motion.div>
           ) : (

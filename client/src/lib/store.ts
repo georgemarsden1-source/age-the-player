@@ -21,17 +21,19 @@ interface GameState {
   humanPlayers: string[];
   footballers: Player[];
   currentRound: number;
+  currentPlayerIndex: number;
   roundResults: RoundResult[];
   currentRoundGuesses: { [humanPlayer: string]: number };
   playerScores: { [humanPlayer: string]: number };
+  currentGuessValue: number;
   status: GameStatus;
   
   addPlayer: (name: string) => boolean;
   removePlayer: (name: string) => void;
   setFootballers: (players: Player[]) => void;
   startGame: () => void;
-  setGuess: (humanPlayer: string, age: number) => void;
-  submitAllGuesses: () => void;
+  setCurrentGuess: (age: number) => void;
+  submitCurrentPlayerGuess: () => void;
   nextRound: () => void;
   resetGame: () => void;
 }
@@ -40,9 +42,11 @@ export const useGameStore = create<GameState>((set, get) => ({
   humanPlayers: [],
   footballers: [],
   currentRound: 0,
+  currentPlayerIndex: 0,
   roundResults: [],
   currentRoundGuesses: {},
   playerScores: {},
+  currentGuessValue: 25,
   status: 'idle',
 
   addPlayer: (name: string) => {
@@ -67,14 +71,11 @@ export const useGameStore = create<GameState>((set, get) => ({
   },
 
   setFootballers: (players: Player[]) => {
-    const { humanPlayers } = get();
-    const initialGuesses: { [key: string]: number } = {};
-    humanPlayers.forEach(p => {
-      initialGuesses[p] = 25;
-    });
     set({ 
       footballers: players, 
-      currentRoundGuesses: initialGuesses,
+      currentRoundGuesses: {},
+      currentPlayerIndex: 0,
+      currentGuessValue: 25,
       status: 'playing' 
     });
   },
@@ -84,71 +85,87 @@ export const useGameStore = create<GameState>((set, get) => ({
     if (humanPlayers.length === 0) return;
     
     const initialScores: { [key: string]: number } = {};
-    const initialGuesses: { [key: string]: number } = {};
     humanPlayers.forEach(p => {
       initialScores[p] = 0;
-      initialGuesses[p] = 25;
     });
     set({ 
       currentRound: 0, 
+      currentPlayerIndex: 0,
       roundResults: [],
-      currentRoundGuesses: initialGuesses,
+      currentRoundGuesses: {},
       playerScores: initialScores,
+      currentGuessValue: 25,
       status: 'loading' 
     });
   },
 
-  setGuess: (humanPlayer: string, age: number) => {
-    const { currentRoundGuesses } = get();
-    set({ currentRoundGuesses: { ...currentRoundGuesses, [humanPlayer]: age } });
+  setCurrentGuess: (age: number) => {
+    set({ currentGuessValue: age });
   },
 
-  submitAllGuesses: () => {
-    const { currentRound, roundResults, currentRoundGuesses, playerScores, footballers, humanPlayers } = get();
+  submitCurrentPlayerGuess: () => {
+    const { 
+      currentRound, currentPlayerIndex, currentRoundGuesses, 
+      playerScores, footballers, humanPlayers, currentGuessValue,
+      roundResults
+    } = get();
+    
     const currentFootballer = footballers[currentRound];
     if (!currentFootballer) return;
     
-    const guesses: RoundGuess[] = [];
-    const newScores = { ...playerScores };
+    const currentPlayer = humanPlayers[currentPlayerIndex];
+    if (!currentPlayer) return;
     
-    humanPlayers.forEach(player => {
-      const guess = currentRoundGuesses[player] ?? 25;
-      const diff = Math.abs(guess - currentFootballer.age);
-      guesses.push({
-        humanPlayerName: player,
-        guess,
-        points: diff
+    const newGuesses = { ...currentRoundGuesses, [currentPlayer]: currentGuessValue };
+    
+    if (currentPlayerIndex < humanPlayers.length - 1) {
+      set({
+        currentRoundGuesses: newGuesses,
+        currentPlayerIndex: currentPlayerIndex + 1,
+        currentGuessValue: 25
       });
-      newScores[player] = (newScores[player] || 0) + diff;
-    });
-    
-    const roundResult: RoundResult = {
-      round: currentRound,
-      footballerId: currentFootballer.id,
-      footballerName: currentFootballer.name,
-      actualAge: currentFootballer.age,
-      guesses
-    };
-    
-    set({
-      roundResults: [...roundResults, roundResult],
-      playerScores: newScores,
-      status: 'round-feedback'
-    });
+    } else {
+      const guesses: RoundGuess[] = [];
+      const newScores = { ...playerScores };
+      
+      humanPlayers.forEach(player => {
+        const guess = player === currentPlayer ? currentGuessValue : (newGuesses[player] ?? 25);
+        const diff = Math.abs(guess - currentFootballer.age);
+        guesses.push({
+          humanPlayerName: player,
+          guess,
+          points: diff
+        });
+        newScores[player] = (newScores[player] || 0) + diff;
+      });
+      
+      const roundResult: RoundResult = {
+        round: currentRound,
+        footballerId: currentFootballer.id,
+        footballerName: currentFootballer.name,
+        actualAge: currentFootballer.age,
+        guesses
+      };
+      
+      set({
+        currentRoundGuesses: newGuesses,
+        roundResults: [...roundResults, roundResult],
+        playerScores: newScores,
+        status: 'round-feedback'
+      });
+    }
   },
 
   nextRound: () => {
-    const { currentRound, footballers, humanPlayers } = get();
+    const { currentRound, footballers } = get();
     if (currentRound >= footballers.length - 1) {
       set({ status: 'finished' });
     } else {
-      const initialGuesses: { [key: string]: number } = {};
-      humanPlayers.forEach(p => {
-        initialGuesses[p] = 25;
-      });
       set({ 
         currentRound: currentRound + 1,
-        currentRoundGuesses: initialGuesses,
+        currentPlayerIndex: 0,
+        currentRoundGuesses: {},
+        currentGuessValue: 25,
         status: 'playing'
       });
     }
@@ -158,9 +175,11 @@ export const useGameStore = create<GameState>((set, get) => ({
     humanPlayers: [],
     footballers: [],
     currentRound: 0,
+    currentPlayerIndex: 0,
     roundResults: [],
     currentRoundGuesses: {},
     playerScores: {},
+    currentGuessValue: 25,
     status: 'idle'
   })
 }));
