@@ -61,7 +61,7 @@ export default function Game() {
       
       <div className="absolute top-0 left-0 right-0 p-4 md:p-6 z-20 flex justify-between items-center bg-gradient-to-b from-background to-transparent">
         <div className="flex items-center gap-2">
-          <Badge variant="outline" className="text-lg py-1 px-3 border-primary/50 text-primary bg-primary/10">
+          <Badge variant="outline" className="text-lg py-1 px-3 border-white/30 text-white bg-white/10">
             Round {currentRound + 1}/{players.length}
           </Badge>
         </div>
