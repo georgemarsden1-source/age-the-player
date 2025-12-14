@@ -152,8 +152,8 @@ export default function Game() {
                <div className="text-center space-y-4 relative z-10">
                  <div className="flex flex-col items-center">
                     {lastGuess?.points === 0 ? (
-                      <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center mb-2">
-                        <CheckCircle2 className="w-10 h-10 text-primary" />
+                      <div className="w-16 h-16 rounded-full bg-green-500/20 flex items-center justify-center mb-2">
+                        <CheckCircle2 className="w-10 h-10 text-green-500" />
                       </div>
                     ) : (
                       <div className="w-16 h-16 rounded-full bg-orange-500/20 flex items-center justify-center mb-2">
@@ -173,7 +173,7 @@ export default function Game() {
                     </div>
                     <div>
                       <div className="text-xs text-muted-foreground uppercase">Actual Age</div>
-                      <div className="text-2xl font-bold text-primary">{lastGuess?.actual}</div>
+                      <div className="text-2xl font-bold text-white">{lastGuess?.actual}</div>
                     </div>
                     <div>
                       <div className="text-xs text-muted-foreground uppercase">Penalty</div>
