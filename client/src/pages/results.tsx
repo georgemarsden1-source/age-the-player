@@ -6,15 +6,19 @@ import type { Score } from '@shared/schema';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Trophy, RefreshCw, Medal } from 'lucide-react';
+import { Trophy, RefreshCw, Medal, Crown } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 
 export default function Results() {
   const [, setLocation] = useLocation();
-  const { totalScore, guesses, playerName, resetGame, status } = useGameStore();
+  const { playerScores, roundResults, humanPlayers, resetGame, status } = useGameStore();
   const [leaderboard, setLeaderboard] = useState<Score[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  const rankedPlayers = [...humanPlayers].sort((a, b) => (playerScores[a] || 0) - (playerScores[b] || 0));
+  const winner = rankedPlayers[0];
+  const winnerScore = playerScores[winner] || 0;
 
   useEffect(() => {
     if (status === 'idle') {
@@ -24,19 +28,21 @@ export default function Results() {
 
     const saveAndLoadData = async () => {
       try {
-        await submitScore(playerName, totalScore);
+        for (const player of humanPlayers) {
+          await submitScore(player, playerScores[player] || 0);
+        }
         const scores = await getLeaderboard(10);
         setLeaderboard(scores);
       } catch (error) {
         console.error('Failed to save/load data:', error);
-        toast.error('Failed to save score');
+        toast.error('Failed to save scores');
       } finally {
         setIsLoading(false);
       }
     };
 
     saveAndLoadData();
-  }, [status, playerName, totalScore, setLocation]);
+  }, [status, humanPlayers, playerScores, setLocation]);
 
   const handlePlayAgain = () => {
     resetGame();
@@ -57,37 +63,66 @@ export default function Results() {
             <h1 className="text-3xl font-display font-bold text-white uppercase mb-1">
               Full Time!
             </h1>
-            <p className="text-muted-foreground text-sm uppercase tracking-widest mb-4">
-              {playerName}'s Score
-            </p>
             
-            <div className="inline-flex flex-col items-center bg-background/50 border border-white/10 rounded-xl px-8 py-4">
-              <span className="text-5xl font-display font-bold text-white">{totalScore}</span>
-              <span className="text-[10px] text-primary mt-1 uppercase tracking-wider">Penalty Points</span>
-            </div>
+            {humanPlayers.length > 1 && (
+              <div className="mt-4 flex items-center justify-center gap-2">
+                <Crown className="w-6 h-6 text-yellow-500" />
+                <span className="text-xl font-display font-bold text-yellow-500 uppercase">
+                  {winner} Wins!
+                </span>
+              </div>
+            )}
           </div>
 
           <div className="p-6 flex-1 flex flex-col">
+            <h3 className="text-lg font-display uppercase text-white mb-4">Final Standings</h3>
+            
+            <div className="space-y-3 mb-6">
+              {rankedPlayers.map((player, idx) => (
+                <motion.div
+                  key={player}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: idx * 0.1 }}
+                  className={`flex items-center justify-between rounded-lg px-4 py-3 ${
+                    idx === 0 ? 'bg-primary/20 border border-primary/30' : 'bg-white/5 border border-white/10'
+                  }`}
+                  data-testid={`result-player-${idx}`}
+                >
+                  <div className="flex items-center gap-3">
+                    <span className={`text-2xl font-display font-bold ${idx === 0 ? 'text-primary' : 'text-white/50'}`}>
+                      #{idx + 1}
+                    </span>
+                    <span className={`font-medium ${idx === 0 ? 'text-white' : 'text-white/80'}`}>
+                      {player}
+                    </span>
+                  </div>
+                  <span className={`text-2xl font-display font-bold ${idx === 0 ? 'text-primary' : 'text-white'}`}>
+                    {playerScores[player] || 0} pts
+                  </span>
+                </motion.div>
+              ))}
+            </div>
+
             <h3 className="text-lg font-display uppercase text-white mb-4">Round Breakdown</h3>
-            <div className="flex-1 overflow-auto rounded-lg border border-white/10 bg-background/30 mb-6 max-h-[300px]">
+            <div className="flex-1 overflow-auto rounded-lg border border-white/10 bg-background/30 mb-6 max-h-[200px]">
               <Table>
                 <TableHeader className="bg-white/5 sticky top-0 z-10">
                   <TableRow className="border-white/5 hover:bg-transparent">
                     <TableHead className="text-xs uppercase font-bold w-[60px]">Rnd</TableHead>
-                    <TableHead className="text-xs uppercase font-bold">Player</TableHead>
-                    <TableHead className="text-right text-xs uppercase font-bold">Pts</TableHead>
+                    <TableHead className="text-xs uppercase font-bold">Footballer</TableHead>
+                    <TableHead className="text-right text-xs uppercase font-bold">Age</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {guesses.map((guess, idx) => (
+                  {roundResults.map((result, idx) => (
                     <TableRow key={idx} className="border-white/5 hover:bg-white/5">
-                      <TableCell className="font-medium text-white">#{guess.round + 1}</TableCell>
+                      <TableCell className="font-medium text-white">#{result.round + 1}</TableCell>
                       <TableCell className="text-muted-foreground text-xs">
-                        {guess.playerName}<br/>
-                        <span className="text-[10px]">{guess.actual}y (Guess: {guess.guess})</span>
+                        {result.footballerName}
                       </TableCell>
-                      <TableCell className={`text-right font-bold ${guess.points === 0 ? 'text-primary' : 'text-destructive'}`}>
-                        +{guess.points}
+                      <TableCell className="text-right font-bold text-white">
+                        {result.actualAge}
                       </TableCell>
                     </TableRow>
                   ))}
@@ -137,7 +172,7 @@ export default function Results() {
                     </TableRow>
                   ) : (
                     leaderboard.map((entry, idx) => (
-                      <TableRow key={entry.id} className={`border-white/5 hover:bg-white/5 ${entry.playerName === playerName && entry.totalScore === totalScore && idx === 0 ? 'bg-primary/10' : ''}`}>
+                      <TableRow key={entry.id} className={`border-white/5 hover:bg-white/5 ${humanPlayers.includes(entry.playerName) ? 'bg-primary/10' : ''}`}>
                         <TableCell className="text-center font-display text-lg text-white/50">
                            {idx + 1}
                         </TableCell>
