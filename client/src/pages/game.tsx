@@ -7,7 +7,6 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { CheckCircle2, AlertCircle, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import bgImage from '@assets/stock_images/emirates_stadium_ars_f0d946a0.jpg';
 import defaultPlayerImg from '@assets/stock_images/professional_soccer__d8d58f8f.jpg';
 
 export default function Game() {
@@ -53,11 +52,7 @@ export default function Game() {
   if (!player) return null;
 
   return (
-    <div className="min-h-screen w-full flex flex-col items-center justify-center p-4 relative overflow-hidden bg-background text-foreground">
-      <div 
-        className="absolute inset-0 z-0 bg-cover bg-center opacity-20"
-        style={{ backgroundImage: `url(${bgImage})` }}
-      />
+    <div className="min-h-screen w-full flex flex-col items-center justify-center p-4 relative overflow-hidden bg-black text-foreground">
       
       <div className="absolute top-0 left-0 right-0 p-4 md:p-6 z-20 flex justify-between items-center bg-gradient-to-b from-background to-transparent">
         <div className="flex items-center gap-2">

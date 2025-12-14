@@ -31,34 +31,34 @@
 }
 
 :root {
-  /* Blue, Red, White Theme with Yellow Accents */
-  --background: 240 100% 4%; /* Very dark blue-black */
-  --foreground: 0 0% 98%; /* White */
+  /* Blue #002675, White #FFFFFF, Red #DF1A19 Theme */
+  --background: 0 0% 0%; /* Solid black */
+  --foreground: 0 0% 100%; /* White #FFFFFF */
 
-  --card: 240 60% 8%; /* Dark blue card */
-  --card-foreground: 0 0% 98%;
+  --card: 0 0% 8%; /* Dark card */
+  --card-foreground: 0 0% 100%;
 
-  --popover: 240 60% 8%;
-  --popover-foreground: 0 0% 98%;
+  --popover: 0 0% 8%;
+  --popover-foreground: 0 0% 100%;
 
-  --primary: 240 100% 36%; /* Blue #0000b6 */
-  --primary-foreground: 0 0% 98%;
+  --primary: 222 100% 23%; /* Blue #002675 */
+  --primary-foreground: 0 0% 100%;
 
-  --secondary: 357 100% 44%; /* Red #df000c */
-  --secondary-foreground: 0 0% 98%;
+  --secondary: 1 82% 49%; /* Red #DF1A19 */
+  --secondary-foreground: 0 0% 100%;
 
-  --muted: 240 30% 15%;
-  --muted-foreground: 240 10% 65%;
+  --muted: 0 0% 15%;
+  --muted-foreground: 0 0% 65%;
 
-  --accent: 56 100% 48%; /* Yellow #f3e100 */
-  --accent-foreground: 240 100% 4%;
+  --accent: 1 82% 49%; /* Red #DF1A19 */
+  --accent-foreground: 0 0% 100%;
 
-  --destructive: 357 100% 44%; /* Red */
-  --destructive-foreground: 0 0% 98%;
+  --destructive: 1 82% 49%; /* Red #DF1A19 */
+  --destructive-foreground: 0 0% 100%;
 
-  --border: 240 30% 20%;
-  --input: 240 30% 20%;
-  --ring: 56 100% 48%; /* Yellow for focus rings */
+  --border: 0 0% 20%;
+  --input: 0 0% 20%;
+  --ring: 222 100% 23%; /* Blue for focus rings */
 
   --radius: 0.5rem;
 }

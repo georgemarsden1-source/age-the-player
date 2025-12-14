@@ -7,7 +7,6 @@ import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { Trophy, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
-import bgImage from '@assets/stock_images/emirates_stadium_ars_f0d946a0.jpg';
 import { toast } from 'sonner';
 
 export default function Home() {
@@ -34,12 +33,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center p-4 relative overflow-hidden bg-background">
-      <div 
-        className="absolute inset-0 z-0 bg-cover bg-center opacity-40"
-        style={{ backgroundImage: `url(${bgImage})` }}
-      />
-      <div className="absolute inset-0 z-0 bg-gradient-to-t from-background via-background/80 to-transparent" />
+    <div className="min-h-screen w-full flex items-center justify-center p-4 relative overflow-hidden bg-black">
 
       <motion.div 
         initial={{ opacity: 0, y: 20 }}

@@ -8,7 +8,6 @@ import { Card } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Trophy, RefreshCw, Medal } from 'lucide-react';
 import { motion } from 'framer-motion';
-import bgImage from '@assets/stock_images/emirates_stadium_ars_f0d946a0.jpg';
 import { toast } from 'sonner';
 
 export default function Results() {
@@ -45,12 +44,7 @@ export default function Results() {
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center p-4 relative overflow-hidden bg-background">
-      <div 
-        className="absolute inset-0 z-0 bg-cover bg-center opacity-30"
-        style={{ backgroundImage: `url(${bgImage})` }}
-      />
-      <div className="absolute inset-0 z-0 bg-gradient-to-tr from-background via-background/90 to-transparent" />
+    <div className="min-h-screen w-full flex items-center justify-center p-4 relative overflow-hidden bg-black">
 
       <motion.div 
         initial={{ opacity: 0, scale: 0.95 }}
