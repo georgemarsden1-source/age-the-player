@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { CheckCircle2, AlertCircle, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import bgImage from '@assets/generated_images/dark_atmospheric_football_stadium_background.png';
+import bgImage from '@assets/stock_images/emirates_stadium_ars_f0d946a0.jpg';
 import defaultPlayerImg from '@assets/stock_images/professional_soccer__d8d58f8f.jpg';
 
 export default function Game() {
@@ -94,7 +94,7 @@ export default function Game() {
           <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
             <div className="flex items-center gap-2 mb-2">
                <span className="px-2 py-1 bg-primary text-primary-foreground text-xs font-bold uppercase tracking-widest rounded-sm">
-                 {player.team || player.nationality}
+                 {player.team && player.team !== 'Unknown' ? player.team : player.nationality}
                </span>
             </div>
             <h2 className="text-4xl md:text-5xl font-display font-bold text-white uppercase leading-none drop-shadow-lg">
