@@ -26,8 +26,8 @@ async function seedPlayers() {
       nationality: record.nationality,
       team: record.team,
       position: record.position,
-      overallRating: 80, // Default rating since not in Transfermarkt data
-      imageUrl: null,
+      overallRating: 80,
+      imageUrl: record.image_url || null,
     }));
 
     console.log(`Preparing to seed ${playerData.length} players into database...`);

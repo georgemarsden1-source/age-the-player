@@ -43,13 +43,18 @@ def scrape_page(page_num):
                 # Get all tds
                 tds = row.find_all('td', recursive=False)
                 
-                # Position from inline-table second row
+                # Position and image from inline-table
                 inline_table = row.find('table', class_='inline-table')
                 position = None
+                image_url = None
                 if inline_table:
                     pos_rows = inline_table.find_all('tr')
                     if len(pos_rows) > 1:
                         position = pos_rows[1].get_text(strip=True)
+                    # Get player image URL
+                    img_elem = inline_table.find('img', class_='bilderrahmen-fixed')
+                    if img_elem and img_elem.get('src'):
+                        image_url = img_elem.get('src').replace('/small/', '/medium/')
                 
                 # Age is in td with class 'zentriert' containing just a number
                 age = None
@@ -88,7 +93,8 @@ def scrape_page(page_num):
                         'age': age,
                         'nationality': nationality or 'Unknown',
                         'team': team or 'Unknown',
-                        'position': position or 'Unknown'
+                        'position': position or 'Unknown',
+                        'image_url': image_url
                     })
                     
             except Exception as e:
