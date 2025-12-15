@@ -1,35 +1,63 @@
-export function triggerHaptic(style: 'light' | 'medium' | 'heavy' = 'light') {
-  if (typeof window === 'undefined' || !navigator.vibrate) return;
-  
-  const patterns: Record<string, number | number[]> = {
-    light: 10,
-    medium: 25,
-    heavy: 50,
-  };
-  
-  try {
-    navigator.vibrate(patterns[style]);
-  } catch {
-    // Vibration not supported
+import { Haptics, ImpactStyle, NotificationType } from '@capacitor/haptics';
+import { Capacitor } from '@capacitor/core';
+
+const isNative = Capacitor.isNativePlatform();
+
+export async function triggerHaptic(style: 'light' | 'medium' | 'heavy' = 'light') {
+  if (isNative) {
+    const impactStyle = {
+      light: ImpactStyle.Light,
+      medium: ImpactStyle.Medium,
+      heavy: ImpactStyle.Heavy
+    }[style];
+    
+    try {
+      await Haptics.impact({ style: impactStyle });
+    } catch {
+    }
+  } else {
+    if (typeof window !== 'undefined' && navigator.vibrate) {
+      const patterns: Record<string, number> = {
+        light: 10,
+        medium: 25,
+        heavy: 50,
+      };
+      try {
+        navigator.vibrate(patterns[style]);
+      } catch {
+      }
+    }
   }
 }
 
-export function triggerSuccessHaptic() {
-  if (typeof window === 'undefined' || !navigator.vibrate) return;
-  
-  try {
-    navigator.vibrate([50, 50, 50]);
-  } catch {
-    // Vibration not supported
+export async function triggerSuccessHaptic() {
+  if (isNative) {
+    try {
+      await Haptics.notification({ type: NotificationType.Success });
+    } catch {
+    }
+  } else {
+    if (typeof window !== 'undefined' && navigator.vibrate) {
+      try {
+        navigator.vibrate([50, 50, 50]);
+      } catch {
+      }
+    }
   }
 }
 
-export function triggerErrorHaptic() {
-  if (typeof window === 'undefined' || !navigator.vibrate) return;
-  
-  try {
-    navigator.vibrate([100, 50, 100]);
-  } catch {
-    // Vibration not supported
+export async function triggerErrorHaptic() {
+  if (isNative) {
+    try {
+      await Haptics.notification({ type: NotificationType.Error });
+    } catch {
+    }
+  } else {
+    if (typeof window !== 'undefined' && navigator.vibrate) {
+      try {
+        navigator.vibrate([100, 50, 100]);
+      } catch {
+      }
+    }
   }
 }

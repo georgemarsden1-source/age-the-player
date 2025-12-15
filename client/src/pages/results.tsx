@@ -11,6 +11,8 @@ import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { triggerHaptic } from '@/lib/haptics';
 import { toPng } from 'html-to-image';
+import { Share } from '@capacitor/share';
+import { Capacitor } from '@capacitor/core';
 
 export default function Results() {
   const [, setLocation] = useLocation();
@@ -106,6 +108,20 @@ export default function Results() {
     
     try {
       const shareText = generateShareText();
+      
+      if (Capacitor.isNativePlatform()) {
+        try {
+          await Share.share({
+            title: 'Age The Player - My Results',
+            text: shareText,
+            dialogTitle: 'Share Your Score'
+          });
+          toast.success('Shared successfully!');
+          return;
+        } catch (err) {
+          console.error('Native share failed:', err);
+        }
+      }
       
       if (canShareFiles()) {
         const imageBlob = await generateScoreCardImage();
