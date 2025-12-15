@@ -11,10 +11,8 @@ headers = {
     'Accept-Language': 'en-US,en;q=0.5',
 }
 
-def scrape_page(page_num):
+def scrape_page(url):
     """Scrape a single page of players"""
-    url = f"https://www.transfermarkt.com/spieler-statistik/wertvollstespieler/marktwertetop?page={page_num}"
-    
     try:
         response = requests.get(url, headers=headers, timeout=30)
         response.raise_for_status()
@@ -22,7 +20,7 @@ def scrape_page(page_num):
         
         table = soup.find('table', class_='items')
         if not table:
-            print(f"No table found on page {page_num}")
+            print(f"No table found")
             return []
         
         rows = table.find_all('tr', class_=['odd', 'even'])
@@ -60,6 +58,7 @@ def scrape_page(page_num):
                 age = None
                 nationality = None
                 team = None
+                market_value = None
                 
                 for td in tds:
                     # Check if this td has class 'zentriert' and contains just a number (age)
@@ -80,6 +79,10 @@ def scrape_page(page_num):
                             parent_link = club_img.find_parent('a')
                             if parent_link and '/verein/' in str(parent_link.get('href', '')):
                                 team = club_title
+                    
+                    # Market value from rechts class
+                    if 'rechts' in td.get('class', []) and ('€' in text or 'm' in text.lower()):
+                        market_value = text
                 
                 if name and age:
                     # Generate approximate birth date from age
@@ -94,7 +97,8 @@ def scrape_page(page_num):
                         'nationality': nationality or 'Unknown',
                         'team': team or 'Unknown',
                         'position': position or 'Unknown',
-                        'image_url': image_url
+                        'image_url': image_url,
+                        'market_value': market_value
                     })
                     
             except Exception as e:
@@ -104,35 +108,56 @@ def scrape_page(page_num):
         return players
         
     except Exception as e:
-        print(f"Error fetching page {page_num}: {e}")
+        print(f"Error fetching page: {e}")
         return []
 
 def main():
     all_players = []
-    pages_to_scrape = 8  # 25 players per page = 200 players
     
     print("Starting Transfermarkt scraper...")
-    print(f"Will scrape {pages_to_scrape} pages (~{pages_to_scrape * 25} players)\n")
+    
+    # Part 1: Scrape top 200 most valuable players (all ages)
+    print("\n=== Scraping Top 200 Most Valuable Players ===")
+    pages_to_scrape = 8  # 25 players per page = 200 players
     
     for page in range(1, pages_to_scrape + 1):
-        print(f"Scraping page {page}...")
-        players = scrape_page(page)
+        url = f"https://www.transfermarkt.com/spieler-statistik/wertvollstespieler/marktwertetop?page={page}"
+        print(f"Scraping top players page {page}...")
+        players = scrape_page(url)
         all_players.extend(players)
         print(f"  Found {len(players)} players (Total: {len(all_players)})")
         
-        # Rate limiting - be respectful
+        # Rate limiting
         if page < pages_to_scrape:
             time.sleep(2 + random.random())
+    
+    # Part 2: Scrape players aged 30+ with €10m+ value
+    # These are on Transfermarkt's age-filtered list
+    print("\n=== Scraping Players 30+ with High Market Value ===")
+    
+    # Scrape pages for 30+ age group (sorted by market value)
+    for page in range(1, 6):  # Get top 125 players aged 30+
+        url = f"https://www.transfermarkt.com/spieler-statistik/wertvollstespieler/marktwertetop?altersklasse=30&page={page}"
+        print(f"Scraping 30+ players page {page}...")
+        players = scrape_page(url)
+        all_players.extend(players)
+        print(f"  Found {len(players)} players (Total: {len(all_players)})")
+        
+        time.sleep(2 + random.random())
     
     # Create DataFrame
     df = pd.DataFrame(all_players)
     
-    # Remove duplicates
-    df = df.drop_duplicates(subset=['name'])
+    # Remove duplicates (keep first occurrence - from top value list)
+    df = df.drop_duplicates(subset=['name'], keep='first')
     
-    print(f"\nTotal unique players: {len(df)}")
-    print("\nSample data:")
-    print(df.head(15).to_string())
+    print(f"\n=== Summary ===")
+    print(f"Total unique players: {len(df)}")
+    print(f"Players aged 30+: {len(df[df['age'] >= 30])}")
+    print(f"Players under 30: {len(df[df['age'] < 30])}")
+    
+    print("\nSample of 30+ players:")
+    print(df[df['age'] >= 30].head(10)[['name', 'age', 'team', 'position']].to_string())
     
     # Save to CSV
     output_path = 'attached_assets/transfermarkt_players.csv'
