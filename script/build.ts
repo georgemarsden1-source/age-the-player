@@ -1,6 +1,6 @@
 import { build as esbuild } from "esbuild";
 import { build as viteBuild } from "vite";
-import { rm, readFile } from "fs/promises";
+import { rm, readFile, copyFile, mkdir } from "fs/promises";
 
 // server deps to bundle to reduce openat(2) syscalls
 // which helps cold start times
@@ -9,6 +9,7 @@ const allowlist = [
   "axios",
   "connect-pg-simple",
   "cors",
+  "csv-parse",
   "date-fns",
   "drizzle-orm",
   "drizzle-zod",
@@ -59,6 +60,11 @@ async function buildAll() {
     external: externals,
     logLevel: "info",
   });
+
+  // Copy player data CSV to dist for production seeding
+  console.log("copying player data...");
+  await mkdir("dist/data", { recursive: true });
+  await copyFile("attached_assets/transfermarkt_players.csv", "dist/data/players.csv");
 }
 
 buildAll().catch((err) => {

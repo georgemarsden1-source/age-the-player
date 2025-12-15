@@ -1,6 +1,6 @@
 import { drizzle } from "drizzle-orm/node-postgres";
 import pg from "pg";
-import { eq, asc, sql } from "drizzle-orm";
+import { eq, asc, sql, count } from "drizzle-orm";
 import { 
   type User, 
   type InsertUser,
@@ -12,6 +12,9 @@ import {
   players,
   scores
 } from "@shared/schema";
+import { readFileSync, existsSync } from "fs";
+import { parse } from "csv-parse/sync";
+import path from "path";
 
 const { Pool } = pg;
 
@@ -22,6 +25,71 @@ const pool = new Pool({
 
 // Initialize Drizzle ORM
 export const db = drizzle(pool);
+
+// Auto-seed players if database is empty
+export async function ensurePlayersSeeded(): Promise<void> {
+  try {
+    const result = await db.select({ count: count() }).from(players);
+    const playerCount = result[0]?.count || 0;
+    
+    if (playerCount > 0) {
+      console.log(`[seed] Database has ${playerCount} players, skipping seed`);
+      return;
+    }
+
+    console.log("[seed] No players found, auto-seeding database...");
+    
+    // Try multiple paths for the CSV file
+    const possiblePaths = [
+      path.resolve(__dirname, "data/players.csv"),  // Production: dist/data/players.csv
+      path.resolve(process.cwd(), "dist/data/players.csv"),
+      path.resolve(process.cwd(), "attached_assets/transfermarkt_players.csv"),  // Development
+    ];
+    
+    let csvPath: string | null = null;
+    for (const p of possiblePaths) {
+      if (existsSync(p)) {
+        csvPath = p;
+        break;
+      }
+    }
+    
+    if (!csvPath) {
+      console.error("[seed] Could not find player CSV file");
+      return;
+    }
+    
+    console.log(`[seed] Reading from: ${csvPath}`);
+    const csvContent = readFileSync(csvPath, "utf-8");
+    const records = parse(csvContent, {
+      columns: true,
+      skip_empty_lines: true,
+    });
+
+    const playerData = records.map((record: any) => ({
+      name: record.name,
+      fullName: record.name,
+      birthDate: record.birth_date,
+      age: parseInt(record.age),
+      nationality: record.nationality,
+      team: record.team,
+      position: record.position,
+      overallRating: 80,
+      imageUrl: record.image_url || null,
+    }));
+
+    // Insert in batches
+    const batchSize = 50;
+    for (let i = 0; i < playerData.length; i += batchSize) {
+      const batch = playerData.slice(i, i + batchSize);
+      await db.insert(players).values(batch);
+    }
+    
+    console.log(`[seed] Successfully seeded ${playerData.length} players`);
+  } catch (error) {
+    console.error("[seed] Error during auto-seed:", error);
+  }
+}
 
 export interface IStorage {
   // User methods
