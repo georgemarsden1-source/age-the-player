@@ -33,11 +33,17 @@ export default function Home() {
     try {
       startGame();
       const players = await getRandomPlayers(10);
+      if (!players || players.length === 0) {
+        throw new Error('No players available');
+      }
       setFootballers(players);
-      setLocation('/game');
+      setTimeout(() => {
+        setLocation('/game');
+      }, 50);
     } catch (error) {
       console.error('Failed to fetch players:', error);
       toast.error('Failed to load players. Please try again.');
+      useGameStore.setState({ status: 'idle' });
       setIsLoading(false);
     }
   };
