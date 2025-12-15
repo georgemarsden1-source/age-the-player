@@ -6,6 +6,7 @@ import { Slider } from '@/components/ui/slider';
 import { Progress } from '@/components/ui/progress';
 import { CheckCircle2, AlertCircle, ArrowRight, User } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import confetti from 'canvas-confetti';
 import defaultPlayerImg from '@assets/stock_images/professional_soccer__d8d58f8f.jpg';
 
 export default function Game() {
@@ -36,6 +37,19 @@ export default function Game() {
       setLocation('/results');
     }
   }, [status, footballers, setLocation]);
+
+  useEffect(() => {
+    if (status === 'round-feedback' && lastRoundResult) {
+      const hasSpotOn = lastRoundResult.guesses.some(guess => guess.points === 0);
+      if (hasSpotOn) {
+        confetti({
+          particleCount: 100,
+          spread: 70,
+          origin: { y: 0.6 }
+        });
+      }
+    }
+  }, [status, lastRoundResult]);
 
   const handleSubmit = () => {
     submitCurrentPlayerGuess();
