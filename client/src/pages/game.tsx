@@ -178,24 +178,33 @@ export default function Game() {
                  </div>
 
                  <div className="space-y-3 py-4 border-y border-white/5">
-                   {lastRoundResult?.guesses.map((guess, idx) => (
-                     <div key={guess.humanPlayerName} className="flex items-center justify-between bg-white/5 rounded-lg px-4 py-3" data-testid={`feedback-player-${idx}`}>
-                       <div className="flex items-center gap-3">
-                         {guess.points === 0 ? (
-                           <CheckCircle2 className="w-5 h-5 text-green-500" />
-                         ) : (
-                           <AlertCircle className="w-5 h-5 text-orange-500" />
-                         )}
-                         <span className="text-white font-medium">{guess.humanPlayerName}</span>
+                   {lastRoundResult?.guesses.map((guess, idx) => {
+                     const feedbackText = guess.points === 0 ? 'Spot On!' : guess.points <= 2 ? 'Close Call!' : 'Poor Guess';
+                     const feedbackColor = guess.points === 0 ? 'text-green-500' : guess.points <= 2 ? 'text-orange-500' : 'text-destructive';
+                     return (
+                       <div key={guess.humanPlayerName} className="flex items-center justify-between bg-white/5 rounded-lg px-4 py-3" data-testid={`feedback-player-${idx}`}>
+                         <div className="flex items-center gap-3">
+                           {guess.points === 0 ? (
+                             <CheckCircle2 className="w-5 h-5 text-green-500" />
+                           ) : guess.points <= 2 ? (
+                             <AlertCircle className="w-5 h-5 text-orange-500" />
+                           ) : (
+                             <AlertCircle className="w-5 h-5 text-destructive" />
+                           )}
+                           <div>
+                             <span className="text-white font-medium">{guess.humanPlayerName}</span>
+                             <span className={`ml-2 text-xs ${feedbackColor}`}>{feedbackText}</span>
+                           </div>
+                         </div>
+                         <div className="flex items-center gap-4">
+                           <span className="text-white/60 text-sm">Guessed: {guess.guess}</span>
+                           <span className={`font-bold ${feedbackColor}`}>
+                             +{guess.points}
+                           </span>
+                         </div>
                        </div>
-                       <div className="flex items-center gap-4">
-                         <span className="text-white/60 text-sm">Guessed: {guess.guess}</span>
-                         <span className={`font-bold ${guess.points === 0 ? 'text-green-500' : 'text-destructive'}`}>
-                           +{guess.points}
-                         </span>
-                       </div>
-                     </div>
-                   ))}
+                     );
+                   })}
                  </div>
 
                  <Button 

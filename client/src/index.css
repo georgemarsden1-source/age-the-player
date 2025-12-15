@@ -41,7 +41,7 @@
   --popover: 0 0% 8%;
   --popover-foreground: 0 0% 100%;
 
-  --primary: 222 100% 23%; /* Blue #002675 */
+  --primary: 228 85% 52%; /* Blue #1a44ed */
   --primary-foreground: 0 0% 100%;
 
   --secondary: 1 82% 49%; /* Red #DF1A19 */
@@ -58,7 +58,7 @@
 
   --border: 0 0% 20%;
   --input: 0 0% 20%;
-  --ring: 222 100% 23%; /* Blue for focus rings */
+  --ring: 228 85% 52%; /* Blue #1a44ed for focus rings */
 
   --radius: 0.5rem;
 }
