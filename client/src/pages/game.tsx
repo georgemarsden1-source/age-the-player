@@ -148,7 +148,7 @@ export default function Game() {
                   className="w-full text-xl py-6 font-display uppercase tracking-widest bg-secondary text-white hover:bg-secondary/90 transition-all border-2 border-white/20"
                   data-testid="button-submit-guess"
                 >
-                  {isLastPlayer ? 'Submit & See Results' : 'Submit & Next Player'}
+                  {isLastPlayer ? 'Submit & See Results' : 'Submit & Next Footballer'}
                 </Button>
 
                 {humanPlayers.length > 1 && (
@@ -213,7 +213,7 @@ export default function Game() {
                   variant="outline"
                   data-testid="button-next-round"
                 >
-                  {currentRound >= footballers.length - 1 ? 'See Results' : 'Next Player'} <ArrowRight className="ml-2 w-4 h-4" />
+                  {currentRound >= footballers.length - 1 ? 'See Results' : 'Next Footballer'} <ArrowRight className="ml-2 w-4 h-4" />
                 </Button>
                </div>
             </motion.div>
