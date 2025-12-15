@@ -132,14 +132,16 @@ def main():
             time.sleep(2 + random.random())
     
     # Part 2: Scrape players aged 30+ with €10m+ value
-    # These are on Transfermarkt's age-filtered list
+    # Use the age class filter for 30+ with plus=1 to activate the filter
     print("\n=== Scraping Players 30+ with High Market Value ===")
     
-    # Scrape pages for 30+ age group (sorted by market value)
-    for page in range(1, 6):  # Get top 125 players aged 30+
-        url = f"https://www.transfermarkt.com/spieler-statistik/wertvollstespieler/marktwertetop?altersklasse=30&page={page}"
+    for page in range(1, 15):  # Get more pages for 30+ players
+        url = f"https://www.transfermarkt.com/spieler-statistik/wertvollstespieler/marktwertetop?altersklasse=ue30&plus=1&page={page}"
         print(f"Scraping 30+ players page {page}...")
         players = scrape_page(url)
+        if not players:
+            print(f"  No more players found, stopping")
+            break
         all_players.extend(players)
         print(f"  Found {len(players)} players (Total: {len(all_players)})")
         
