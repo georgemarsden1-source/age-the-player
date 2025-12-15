@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation } from 'wouter';
 import { useGameStore } from '@/lib/store';
 import { Button } from '@/components/ui/button';
@@ -7,6 +7,7 @@ import { Progress } from '@/components/ui/progress';
 import { CheckCircle2, AlertCircle, ArrowRight, User } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import confetti from 'canvas-confetti';
+import { triggerHaptic, triggerSuccessHaptic, triggerErrorHaptic } from '@/lib/haptics';
 import defaultPlayerImg from '@assets/stock_images/professional_soccer__d8d58f8f.jpg';
 
 export default function Game() {
@@ -52,12 +53,26 @@ export default function Game() {
   }, [status, lastRoundResult]);
 
   const handleSubmit = () => {
+    triggerHaptic('medium');
     submitCurrentPlayerGuess();
   };
 
   const handleNext = () => {
+    triggerHaptic('light');
     nextRound();
   };
+
+  useEffect(() => {
+    if (status === 'round-feedback' && lastRoundResult) {
+      const hasSpotOn = lastRoundResult.guesses.some(guess => guess.points === 0);
+      const hasPoorGuess = lastRoundResult.guesses.some(guess => guess.points > 2);
+      if (hasSpotOn) {
+        triggerSuccessHaptic();
+      } else if (hasPoorGuess) {
+        triggerErrorHaptic();
+      }
+    }
+  }, [status, lastRoundResult]);
 
   if (!footballer) return null;
 
@@ -89,9 +104,16 @@ export default function Game() {
         
         <motion.div 
           key={footballer.id}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+          initial={{ opacity: 0, rotateY: -90, scale: 0.8 }}
+          animate={{ opacity: 1, rotateY: 0, scale: 1 }}
+          exit={{ opacity: 0, rotateY: 90, scale: 0.8 }}
+          transition={{ 
+            duration: 0.6, 
+            type: "spring",
+            stiffness: 100,
+            damping: 15
+          }}
+          style={{ transformStyle: "preserve-3d", perspective: 1000 }}
           className="w-full bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10"
         >
           <div className="flex items-center gap-5">

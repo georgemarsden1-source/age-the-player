@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useLocation } from 'wouter';
 import { useGameStore } from '@/lib/store';
 import { submitScore, getLeaderboard } from '@/lib/api';
@@ -6,15 +6,19 @@ import type { Score } from '@shared/schema';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Trophy, RefreshCw, Medal, Crown } from 'lucide-react';
+import { Trophy, RefreshCw, Medal, Crown, Share2, Download } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
+import { triggerHaptic } from '@/lib/haptics';
+import { toPng } from 'html-to-image';
 
 export default function Results() {
   const [, setLocation] = useLocation();
   const { playerScores, roundResults, humanPlayers, resetGame, status } = useGameStore();
   const [leaderboard, setLeaderboard] = useState<Score[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isGeneratingImage, setIsGeneratingImage] = useState(false);
+  const scoreCardRef = useRef<HTMLDivElement>(null);
 
   const rankedPlayers = [...humanPlayers].sort((a, b) => (playerScores[a] || 0) - (playerScores[b] || 0));
   const winner = rankedPlayers[0];
@@ -45,8 +49,129 @@ export default function Results() {
   }, [status, humanPlayers, playerScores, setLocation]);
 
   const handlePlayAgain = () => {
+    triggerHaptic('medium');
     resetGame();
     setLocation('/');
+  };
+
+  const generateShareText = () => {
+    const lines = [
+      "🎮 AGE THE PLAYER",
+      "",
+      "📊 Results:",
+      ...rankedPlayers.map((player, idx) => 
+        `${idx === 0 ? '🏆' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : '  '} ${player}: ${playerScores[player] || 0} pts`
+      ),
+      "",
+      `🎯 ${roundResults.length} rounds played`,
+      "",
+      "Can you beat my score? Play now!"
+    ];
+    return lines.join('\n');
+  };
+
+  const generateScoreCardImage = async (): Promise<Blob | null> => {
+    if (!scoreCardRef.current) return null;
+    
+    try {
+      const dataUrl = await toPng(scoreCardRef.current, {
+        quality: 1,
+        pixelRatio: 2,
+        backgroundColor: '#000000'
+      });
+      
+      const response = await fetch(dataUrl);
+      return await response.blob();
+    } catch (error) {
+      console.error('Failed to generate image:', error);
+      return null;
+    }
+  };
+
+  const canShareFiles = (): boolean => {
+    if (!navigator.share || !navigator.canShare) return false;
+    try {
+      const testFile = new File(['test'], 'test.png', { type: 'image/png' });
+      return navigator.canShare({ files: [testFile] });
+    } catch {
+      return false;
+    }
+  };
+
+  const handleShare = async () => {
+    triggerHaptic('medium');
+    setIsGeneratingImage(true);
+    
+    try {
+      const shareText = generateShareText();
+      
+      if (canShareFiles()) {
+        const imageBlob = await generateScoreCardImage();
+        if (imageBlob) {
+          const file = new File([imageBlob], 'age-the-player-results.png', { type: 'image/png' });
+          try {
+            await navigator.share({ files: [file], title: 'Age The Player - My Results', text: shareText });
+            toast.success('Shared successfully!');
+            return;
+          } catch (err) {
+            if ((err as Error).name === 'AbortError') return;
+          }
+        }
+      }
+      
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: 'Age The Player - My Results',
+            text: shareText,
+            url: window.location.origin
+          });
+          toast.success('Shared successfully!');
+          toast.info('Tap the download button to save your score card image');
+          return;
+        } catch (err) {
+          if ((err as Error).name === 'AbortError') return;
+        }
+      }
+      
+      await copyToClipboard(shareText);
+      toast.info('Tap the download button to save your score card image');
+    } finally {
+      setIsGeneratingImage(false);
+    }
+  };
+
+  const handleDownloadImage = async () => {
+    triggerHaptic('medium');
+    setIsGeneratingImage(true);
+    
+    try {
+      const imageBlob = await generateScoreCardImage();
+      if (imageBlob) {
+        const url = URL.createObjectURL(imageBlob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'age-the-player-results.png';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        toast.success('Image downloaded!');
+      }
+    } catch {
+      toast.error('Failed to download image');
+    } finally {
+      setIsGeneratingImage(false);
+    }
+  };
+
+  const copyToClipboard = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text + '\n' + window.location.origin);
+      toast.success('Results copied to clipboard!');
+    } catch {
+      toast.error('Failed to copy results');
+    }
   };
 
   return (
@@ -130,12 +255,33 @@ export default function Results() {
               </Table>
             </div>
 
-            <Button 
-              onClick={handlePlayAgain} 
-              className="w-full py-6 text-lg font-display uppercase tracking-widest bg-primary text-primary-foreground hover:bg-primary/90"
-            >
-              <RefreshCw className="mr-2 w-5 h-5" /> Play Again
-            </Button>
+            <div className="flex gap-3">
+              <Button 
+                onClick={handleDownloadImage} 
+                variant="outline"
+                disabled={isGeneratingImage}
+                className="py-6 text-lg font-display uppercase tracking-widest border-white/20 hover:bg-white/10"
+                data-testid="button-download"
+              >
+                <Download className="w-5 h-5" />
+              </Button>
+              <Button 
+                onClick={handleShare} 
+                variant="outline"
+                disabled={isGeneratingImage}
+                className="flex-1 py-6 text-lg font-display uppercase tracking-widest border-white/20 hover:bg-white/10"
+                data-testid="button-share"
+              >
+                <Share2 className="mr-2 w-5 h-5" /> {isGeneratingImage ? '...' : 'Share'}
+              </Button>
+              <Button 
+                onClick={handlePlayAgain} 
+                className="flex-1 py-6 text-lg font-display uppercase tracking-widest bg-primary text-primary-foreground hover:bg-primary/90"
+                data-testid="button-play-again"
+              >
+                <RefreshCw className="mr-2 w-5 h-5" /> Play Again
+              </Button>
+            </div>
           </div>
         </Card>
 
@@ -191,6 +337,65 @@ export default function Results() {
           </div>
         </Card>
       </motion.div>
+
+      <div 
+        ref={scoreCardRef}
+        className="fixed -left-[9999px] top-0 w-[400px] p-6 bg-black"
+        style={{ fontFamily: 'system-ui, sans-serif' }}
+      >
+        <div className="text-center mb-4">
+          <div className="text-3xl font-bold text-white mb-1">AGE THE PLAYER</div>
+          <div className="text-sm text-white/60">FULL TIME!</div>
+        </div>
+        
+        {humanPlayers.length > 1 && (
+          <div className="text-center mb-4">
+            <div className="text-yellow-500 text-xl font-bold">{winner} WINS!</div>
+          </div>
+        )}
+        
+        <div className="space-y-2 mb-4">
+          {rankedPlayers.map((player, idx) => (
+            <div 
+              key={player}
+              className={`flex items-center justify-between rounded-lg px-4 py-2 ${
+                idx === 0 ? 'bg-[#1a44ed]/30 border border-[#1a44ed]/50' : 'bg-white/10 border border-white/20'
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <span className={`text-xl font-bold ${idx === 0 ? 'text-[#1a44ed]' : 'text-white/50'}`}>
+                  #{idx + 1}
+                </span>
+                <span className="text-white font-medium">{player}</span>
+              </div>
+              <span className={`text-xl font-bold ${idx === 0 ? 'text-[#1a44ed]' : 'text-white'}`}>
+                {playerScores[player] || 0} pts
+              </span>
+            </div>
+          ))}
+        </div>
+
+        <div className="bg-white/5 rounded-lg p-3 mb-4">
+          <div className="text-xs text-white/50 uppercase mb-2">Round Summary</div>
+          <div className="space-y-1">
+            {roundResults.slice(0, 5).map((result, idx) => (
+              <div key={idx} className="flex justify-between text-sm">
+                <span className="text-white/70">{result.footballerName}</span>
+                <span className="text-white font-medium">{result.actualAge} yrs</span>
+              </div>
+            ))}
+            {roundResults.length > 5 && (
+              <div className="text-white/40 text-xs text-center mt-1">
+                +{roundResults.length - 5} more rounds
+              </div>
+            )}
+          </div>
+        </div>
+        
+        <div className="text-center text-white/40 text-sm">
+          {roundResults.length} rounds played
+        </div>
+      </div>
     </div>
   );
 }
