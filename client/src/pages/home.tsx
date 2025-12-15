@@ -72,24 +72,24 @@ export default function Home() {
                 <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground ml-1">
                   Add Player
                 </label>
-                <div className="flex gap-2">
+                <div className="space-y-3">
                   <Input
                     type="text"
                     placeholder="Enter player name..."
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="bg-background/50 border-white/10 text-lg py-6 focus-visible:ring-primary flex-1"
+                    className="bg-background/50 border-white/10 text-lg py-6 focus-visible:ring-primary w-full"
                     data-testid="input-player-name"
                     autoFocus
                     disabled={isLoading}
                   />
                   <Button 
                     type="submit" 
-                    className="py-6 px-4 bg-white/10 hover:bg-white/20 border border-white/20"
+                    className="w-full py-5 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-display uppercase tracking-wider"
                     disabled={!name.trim() || isLoading}
                     data-testid="button-add-player"
                   >
-                    <UserPlus className="w-5 h-5" />
+                    <UserPlus className="w-5 h-5 mr-2" /> Add to Game
                   </Button>
                 </div>
               </div>
