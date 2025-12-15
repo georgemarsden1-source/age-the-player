@@ -21,8 +21,10 @@ export default function Results() {
   const scoreCardRef = useRef<HTMLDivElement>(null);
 
   const rankedPlayers = [...humanPlayers].sort((a, b) => (playerScores[a] || 0) - (playerScores[b] || 0));
+  const topScore = playerScores[rankedPlayers[0]] || 0;
+  const winners = rankedPlayers.filter(player => (playerScores[player] || 0) === topScore);
+  const isDraw = winners.length > 1;
   const winner = rankedPlayers[0];
-  const winnerScore = playerScores[winner] || 0;
 
   useEffect(() => {
     if (status === 'idle') {
@@ -193,7 +195,7 @@ export default function Results() {
               <div className="mt-4 flex items-center justify-center gap-2">
                 <Crown className="w-6 h-6 text-yellow-500" />
                 <span className="text-xl font-display font-bold text-yellow-500 uppercase">
-                  {winner} Wins!
+                  {isDraw ? "It's a Draw!" : `${winner} Wins!`}
                 </span>
               </div>
             )}
@@ -350,7 +352,9 @@ export default function Results() {
         
         {humanPlayers.length > 1 && (
           <div className="text-center mb-4">
-            <div className="text-yellow-500 text-xl font-bold">{winner} WINS!</div>
+            <div className="text-yellow-500 text-xl font-bold">
+              {isDraw ? "IT'S A DRAW!" : `${winner} WINS!`}
+            </div>
           </div>
         )}
         
