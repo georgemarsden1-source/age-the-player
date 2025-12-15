@@ -162,7 +162,7 @@ export default function Game() {
                   className="w-full text-xl py-6 font-display uppercase tracking-widest bg-secondary text-white hover:bg-secondary/90 transition-all border-2 border-white/20"
                   data-testid="button-submit-guess"
                 >
-                  {isLastPlayer ? 'Submit & See Results' : 'Submit & Next Footballer'}
+                  Submit
                 </Button>
 
                 {humanPlayers.length > 1 && (
