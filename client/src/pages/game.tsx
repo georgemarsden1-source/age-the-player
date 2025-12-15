@@ -96,7 +96,7 @@ export default function Game() {
                   {footballer.team && footballer.team !== 'Unknown' ? footballer.team : footballer.nationality}
                 </span>
               </div>
-              <h2 className="text-3xl md:text-4xl font-display font-bold text-white uppercase leading-tight truncate">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-bold text-white uppercase leading-tight break-words">
                 {footballer.name}
               </h2>
               <p className="text-white/60 text-sm mt-1">{footballer.position}</p>
