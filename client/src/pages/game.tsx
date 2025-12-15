@@ -8,7 +8,6 @@ import { CheckCircle2, AlertCircle, ArrowRight, User } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import confetti from 'canvas-confetti';
 import { triggerHaptic, triggerSuccessHaptic, triggerErrorHaptic } from '@/lib/haptics';
-import defaultPlayerImg from '@assets/stock_images/professional_soccer__d8d58f8f.jpg';
 
 export default function Game() {
   const [, setLocation] = useLocation();
@@ -117,21 +116,25 @@ export default function Game() {
           className="w-full bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10"
         >
           <div className="flex items-center gap-5">
-            <div className="relative flex-shrink-0">
-              <div className="w-28 h-28 md:w-32 md:h-32 rounded-xl overflow-hidden border-3 border-white/20 shadow-xl">
-                <img 
-                  src={footballer.imageUrl || defaultPlayerImg} 
-                  alt={footballer.name} 
-                  className="w-full h-full object-cover"
-                />
+            {footballer.imageUrl && (
+              <div className="relative flex-shrink-0">
+                <div className="w-28 h-28 md:w-32 md:h-32 rounded-xl overflow-hidden border-3 border-white/20 shadow-xl">
+                  <img 
+                    src={footballer.imageUrl} 
+                    alt={footballer.name} 
+                    className="w-full h-full object-cover"
+                  />
+                </div>
               </div>
-            </div>
+            )}
             <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 mb-2">
-                <span className="px-2 py-1 bg-secondary text-white text-xs font-bold uppercase tracking-wider rounded">
-                  {footballer.team && footballer.team !== 'Unknown' ? footballer.team : footballer.nationality}
-                </span>
-              </div>
+              {footballer.team && footballer.team !== 'Unknown' && (
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="px-2 py-1 bg-secondary text-white text-xs font-bold uppercase tracking-wider rounded">
+                    {footballer.team}
+                  </span>
+                </div>
+              )}
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-bold text-white uppercase leading-tight break-words">
                 {footballer.name}
               </h2>
