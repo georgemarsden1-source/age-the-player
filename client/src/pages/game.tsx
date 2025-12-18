@@ -4,7 +4,7 @@ import { useGameStore } from '@/lib/store';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { Progress } from '@/components/ui/progress';
-import { CheckCircle2, AlertCircle, ArrowRight, User } from 'lucide-react';
+import { CheckCircle2, AlertCircle, ArrowRight, User, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import confetti from 'canvas-confetti';
 import { triggerHaptic, triggerSuccessHaptic, triggerErrorHaptic } from '@/lib/haptics';
@@ -22,8 +22,17 @@ export default function Game() {
     humanPlayers,
     currentGuessValue,
     setCurrentGuess,
-    playerScores
+    playerScores,
+    resetGame
   } = useGameStore();
+
+  const [showQuitConfirm, setShowQuitConfirm] = useState(false);
+
+  const handleQuit = () => {
+    triggerHaptic('medium');
+    resetGame();
+    setLocation('/');
+  };
 
   const footballer = footballers[currentRound];
   const lastRoundResult = roundResults[roundResults.length - 1];
@@ -79,11 +88,20 @@ export default function Game() {
     <div className="min-h-screen w-full flex flex-col items-center justify-center p-4 relative overflow-hidden bg-black text-foreground">
       
       <div className="absolute top-0 left-0 right-0 p-4 md:p-6 z-20 flex justify-between items-center bg-gradient-to-b from-black to-transparent">
-        <div className="flex items-center gap-1">
-          <span className="text-sm text-white/70 uppercase tracking-wider font-semibold">Round</span>
-          <span className="text-2xl font-display font-bold text-white">
-            {currentRound + 1}/{footballers.length}
-          </span>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setShowQuitConfirm(true)}
+            className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
+            data-testid="button-quit"
+          >
+            <X className="w-4 h-4 text-white/70" />
+          </button>
+          <div className="flex items-center gap-1">
+            <span className="text-sm text-white/70 uppercase tracking-wider font-semibold">Round</span>
+            <span className="text-2xl font-display font-bold text-white">
+              {currentRound + 1}/{footballers.length}
+            </span>
+          </div>
         </div>
         <div className="flex items-center gap-3">
           {humanPlayers.map(player => (
@@ -96,6 +114,37 @@ export default function Game() {
           ))}
         </div>
       </div>
+
+      {showQuitConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-card border border-white/10 rounded-xl p-6 max-w-sm w-full text-center space-y-4"
+          >
+            <h3 className="text-xl font-display font-bold text-white uppercase">Quit Game?</h3>
+            <p className="text-white/60">Your progress will be lost.</p>
+            <div className="flex gap-3">
+              <Button
+                variant="outline"
+                className="flex-1"
+                onClick={() => setShowQuitConfirm(false)}
+                data-testid="button-cancel-quit"
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="destructive"
+                className="flex-1"
+                onClick={handleQuit}
+                data-testid="button-confirm-quit"
+              >
+                Quit
+              </Button>
+            </div>
+          </motion.div>
+        </div>
+      )}
 
       <Progress value={((currentRound) / footballers.length) * 100} className="absolute top-0 left-0 right-0 h-1 z-30 rounded-none bg-white/10" />
 
@@ -211,9 +260,11 @@ export default function Game() {
             >
                <div className="text-center space-y-4 relative z-10">
                  <div className="flex flex-col items-center mb-4">
-                    <h3 className="text-2xl font-display uppercase tracking-wider text-white">
-                      {footballer.name} is {lastRoundResult?.actualAge} years old!
-                    </h3>
+                    <p className="text-sm text-white/60 uppercase tracking-wider mb-2">{footballer.name} is</p>
+                    <div className="text-6xl font-display font-bold text-primary mb-1" data-testid="text-actual-age">
+                      {lastRoundResult?.actualAge}
+                    </div>
+                    <p className="text-lg text-white/80 uppercase tracking-wider">years old</p>
                  </div>
 
                  <div className="space-y-3 py-4 border-y border-white/5">

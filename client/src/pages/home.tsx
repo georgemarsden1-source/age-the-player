@@ -5,13 +5,15 @@ import { getRandomPlayers } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
-import { Trophy, ArrowRight, UserPlus, X, Users } from 'lucide-react';
+import { Slider } from '@/components/ui/slider';
+import { Trophy, ArrowRight, UserPlus, X, Users, Hash } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 
 export default function Home() {
   const [name, setName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [numRounds, setNumRounds] = useState(10);
   const [, setLocation] = useLocation();
   const { humanPlayers, addPlayer, removePlayer, startGame, setFootballers } = useGameStore();
 
@@ -32,7 +34,7 @@ export default function Home() {
     setIsLoading(true);
     try {
       startGame();
-      const players = await getRandomPlayers(10);
+      const players = await getRandomPlayers(numRounds);
       if (!players || players.length === 0) {
         throw new Error('No players available');
       }
@@ -134,6 +136,32 @@ export default function Home() {
                 </div>
               </div>
             )}
+
+            <div className="w-full space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Hash className="w-4 h-4 text-primary" />
+                  <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    Number of Rounds
+                  </span>
+                </div>
+                <span className="text-2xl font-display font-bold text-white">{numRounds}</span>
+              </div>
+              <Slider
+                value={[numRounds]}
+                onValueChange={(vals) => setNumRounds(vals[0])}
+                min={1}
+                max={20}
+                step={1}
+                className="py-2"
+                data-testid="slider-rounds"
+                disabled={isLoading}
+              />
+              <div className="flex justify-between text-xs text-muted-foreground">
+                <span>1</span>
+                <span>20</span>
+              </div>
+            </div>
 
             <Button 
               onClick={handleKickOff}
