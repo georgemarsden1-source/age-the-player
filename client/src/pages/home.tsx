@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { Slider } from '@/components/ui/slider';
-import { Trophy, ArrowRight, UserPlus, X, Users, Hash } from 'lucide-react';
+import { Trophy, ArrowRight, UserPlus, X, Users, Hash, Search } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 
@@ -171,11 +171,20 @@ export default function Home() {
             >
               {isLoading ? 'Loading...' : 'Kick Off'} <ArrowRight className="ml-2 w-5 h-5" />
             </Button>
+
+            <Button 
+              onClick={() => setLocation('/search')}
+              variant="outline"
+              className="w-full py-5 border-white/20 text-white/80 hover:text-white hover:bg-white/10 font-display uppercase tracking-wider"
+              data-testid="button-search-players"
+            >
+              <Search className="mr-2 w-5 h-5" /> Search Players
+            </Button>
           </div>
         </Card>
         
         <div className="mt-8 text-center text-xs text-muted-foreground/60 uppercase tracking-widest">
-          200+ Players • Global Leaderboard
+          850+ Players • Global Leaderboard
         </div>
       </motion.div>
     </div>

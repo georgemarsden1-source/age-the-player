@@ -11,7 +11,8 @@ export async function registerRoutes(
   app.get("/api/players/search", async (req, res) => {
     try {
       const query = (req.query.q as string) || "";
-      const limit = parseInt(req.query.limit as string) || 20;
+      const requestedLimit = parseInt(req.query.limit as string) || 20;
+      const limit = Math.min(Math.max(1, requestedLimit), 50);
       
       if (!query.trim()) {
         return res.json([]);
