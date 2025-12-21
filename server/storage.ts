@@ -1,6 +1,6 @@
 import { drizzle } from "drizzle-orm/node-postgres";
 import pg from "pg";
-import { eq, asc, sql, count } from "drizzle-orm";
+import { eq, asc, sql, count, ilike } from "drizzle-orm";
 import { 
   type User, 
   type InsertUser,
@@ -100,6 +100,7 @@ export interface IStorage {
   // Player methods
   getRandomPlayers(count: number): Promise<Player[]>;
   getPlayerById(id: number): Promise<Player | undefined>;
+  searchPlayersByName(query: string, limit?: number): Promise<Player[]>;
   
   // Score methods
   createScore(score: InsertScore): Promise<Score>;
@@ -136,6 +137,16 @@ export class DatabaseStorage implements IStorage {
   async getPlayerById(id: number): Promise<Player | undefined> {
     const result = await db.select().from(players).where(eq(players.id, id)).limit(1);
     return result[0];
+  }
+
+  async searchPlayersByName(query: string, limit: number = 20): Promise<Player[]> {
+    const result = await db
+      .select()
+      .from(players)
+      .where(ilike(players.name, `%${query}%`))
+      .orderBy(asc(players.name))
+      .limit(limit);
+    return result;
   }
 
   // Score methods

@@ -21,3 +21,15 @@ export async function getLeaderboard(limit: number = 10): Promise<Score[]> {
   if (!response.ok) throw new Error('Failed to fetch leaderboard');
   return response.json();
 }
+
+export async function searchPlayers(query: string, limit: number = 20): Promise<Player[]> {
+  const response = await fetch(`/api/players/search?q=${encodeURIComponent(query)}&limit=${limit}`);
+  if (!response.ok) throw new Error('Failed to search players');
+  return response.json();
+}
+
+export async function getPlayerById(id: number): Promise<Player> {
+  const response = await fetch(`/api/players/${id}`);
+  if (!response.ok) throw new Error('Failed to fetch player');
+  return response.json();
+}
