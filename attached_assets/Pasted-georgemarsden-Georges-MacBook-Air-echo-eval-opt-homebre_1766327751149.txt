@@ -1,0 +1,46 @@
+georgemarsden@Georges-MacBook-Air ~ % echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zshrc
+eval "$(/opt/homebrew/bin/brew shellenv)"
+georgemarsden@Georges-MacBook-Air ~ % brew install cocoapods
+==> Fetching downloads for: cocoapods
+✔︎ Bottle Manifest cocoapods (1.16.2_1)             [Downloaded   18.1KB/ 18.1KB]
+✔︎ Bottle Manifest libyaml (0.2.5)                  [Downloaded   14.5KB/ 14.5KB]
+✔︎ Bottle Manifest ca-certificates (2025-12-02)     [Downloaded    2.0KB/  2.0KB]
+✔︎ Bottle Manifest openssl@3 (3.6.0)                [Downloaded   11.8KB/ 11.8KB]
+✔︎ Bottle Manifest ruby (3.4.8)                     [Downloaded   16.1KB/ 16.1KB]
+✔︎ Bottle libyaml (0.2.5)                           [Downloaded  110.8KB/110.8KB]
+✔︎ Bottle ca-certificates (2025-12-02)              [Downloaded  131.8KB/131.8KB]
+✔︎ Bottle openssl@3 (3.6.0)                         [Downloaded   10.9MB/ 10.9MB]
+✔︎ Bottle cocoapods (1.16.2_1)                      [Downloaded    7.5MB/  7.5MB]
+✔︎ Bottle ruby (3.4.8)                              [Downloaded   16.1MB/ 16.1MB]
+==> Installing dependencies for cocoapods: libyaml, ca-certificates, openssl@3 and ruby
+==> Installing cocoapods dependency: libyaml
+==> Pouring libyaml--0.2.5.arm64_sequoia.bottle.tar.gz
+🍺  /opt/homebrew/Cellar/libyaml/0.2.5: 11 files, 363KB
+==> Installing cocoapods dependency: ca-certificates
+==> Pouring ca-certificates--2025-12-02.all.bottle.tar.gz
+==> Regenerating CA certificate bundle from keychain, this may take a while...
+🍺  /opt/homebrew/Cellar/ca-certificates/2025-12-02: 4 files, 236.4KB
+==> Installing cocoapods dependency: openssl@3
+==> Pouring openssl@3--3.6.0.arm64_sequoia.bottle.tar.gz
+🍺  /opt/homebrew/Cellar/openssl@3/3.6.0: 7,609 files, 37.7MB
+==> Installing cocoapods dependency: ruby
+==> Pouring ruby--3.4.8.arm64_sequoia.bottle.tar.gz
+🍺  /opt/homebrew/Cellar/ruby/3.4.8: 20,680 files, 60.5MB
+==> Installing cocoapods
+==> Pouring cocoapods--1.16.2_1.arm64_sequoia.bottle.tar.gz
+🍺  /opt/homebrew/Cellar/cocoapods/1.16.2_1: 2,276 files, 18.7MB
+==> Running `brew cleanup cocoapods`...
+Disable this behaviour by setting `HOMEBREW_NO_INSTALL_CLEANUP=1`.
+Hide these hints with `HOMEBREW_NO_ENV_HINTS=1` (see `man brew`).
+georgemarsden@Georges-MacBook-Air ~ % pod --version
+1.16.2
+georgemarsden@Georges-MacBook-Air ~ % cd "/Users/georgemarsden/app stuff/Football-Age/ios/App"
+georgemarsden@Georges-MacBook-Air App % pod install
+Analyzing dependencies
+Adding spec repo `trunk` with CDN `https://cdn.cocoapods.org/`
+[!] CocoaPods could not find compatible versions for pod "Capacitor":
+  In Podfile:
+    Capacitor (from `../../node_modules/@capacitor/ios`)
+
+Specs satisfying the `Capacitor (from `../../node_modules/@capacitor/ios`)` dependency were found, but they required a higher minimum deployment target.
+georgemarsden@Georges-MacBook-Air App % 
