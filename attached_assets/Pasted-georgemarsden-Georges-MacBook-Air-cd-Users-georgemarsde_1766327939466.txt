@@ -1,0 +1,70 @@
+georgemarsden@Georges-MacBook-Air ~ % cd "/Users/georgemarsden/app stuff/Football-Age/ios/App"
+georgemarsden@Georges-MacBook-Air App % pod install
+Analyzing dependencies
+Adding spec repo `trunk` with CDN `https://cdn.cocoapods.org/`
+[!] CocoaPods could not find compatible versions for pod "Capacitor":
+  In Podfile:
+    Capacitor (from `../../node_modules/@capacitor/ios`)
+
+Specs satisfying the `Capacitor (from `../../node_modules/@capacitor/ios`)` dependency were found, but they required a higher minimum deployment target.
+georgemarsden@Georges-MacBook-Air App % nano Podfile
+georgemarsden@Georges-MacBook-Air App % cd "/Users/georgemarsden/app stuff/Football-Age"
+georgemarsden@Georges-MacBook-Air Football-Age % npm install
+
+up to date, audited 535 packages in 1s
+
+52 packages are looking for funding
+  run `npm fund` for details
+
+6 vulnerabilities (2 low, 4 moderate)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+georgemarsden@Georges-MacBook-Air Football-Age % npm run build
+
+> rest-express@1.0.0 build
+> tsx script/build.ts
+
+building client...
+vite v7.1.12 building for production...
+✓ 2210 modules transformed.
+rendering chunks (3)...[meta-images] no Replit deployment domain found, skipping meta tag updates
+../dist/public/index.html                   1.48 kB │ gzip:   0.60 kB
+../dist/public/assets/index-Dl9HMOq8.css   99.71 kB │ gzip:  16.14 kB
+../dist/public/assets/web-BoLGIrLx.js       0.36 kB │ gzip:   0.25 kB
+../dist/public/assets/web-DQr_onZt.js       0.90 kB │ gzip:   0.45 kB
+../dist/public/assets/index-CUQ2i-os.js   540.25 kB │ gzip: 172.93 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 1.06s
+building server...
+
+  dist/index.cjs  1.0mb ⚠️
+
+⚡ Done in 51ms
+copying player data...
+georgemarsden@Georges-MacBook-Air Football-Age % npx cap sync ios
+✔ Copying web assets from public to ios/App/App/public in 2.86ms
+✔ Creating capacitor.config.json in ios/App/App in 365.88μs
+✔ copy ios in 26.80ms
+✔ Updating iOS plugins in 4.64ms
+✖ Updating iOS native dependencies with pod install - failed!
+✖ update ios - failed!
+[error] Analyzing dependencies
+        [!] CocoaPods could not find compatible versions for pod "Capacitor":
+        In Podfile:
+        Capacitor (from `../../node_modules/@capacitor/ios`)
+        
+        Specs satisfying the `Capacitor (from
+        `../../node_modules/@capacitor/ios`)` dependency were found, but they
+        required a higher minimum deployment target.
+        
+georgemarsden@Georges-MacBook-Air Football-Age % 
