@@ -7,6 +7,18 @@ export async function registerRoutes(
   httpServer: Server,
   app: Express
 ): Promise<Server> {
+  // Get random players for a new game (must be before :id route)
+  app.get("/api/players/random", async (req, res) => {
+    try {
+      const count = parseInt(req.query.count as string) || 10;
+      const players = await storage.getRandomPlayers(count);
+      res.json(players);
+    } catch (error) {
+      console.error("Error fetching random players:", error);
+      res.status(500).json({ error: "Failed to fetch players" });
+    }
+  });
+
   // Search players by name
   app.get("/api/players/search", async (req, res) => {
     try {
@@ -26,7 +38,7 @@ export async function registerRoutes(
     }
   });
 
-  // Get player by ID
+  // Get player by ID (must be after specific routes like /random and /search)
   app.get("/api/players/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
@@ -43,18 +55,6 @@ export async function registerRoutes(
     } catch (error) {
       console.error("Error fetching player:", error);
       res.status(500).json({ error: "Failed to fetch player" });
-    }
-  });
-
-  // Get random players for a new game
-  app.get("/api/players/random", async (req, res) => {
-    try {
-      const count = parseInt(req.query.count as string) || 10;
-      const players = await storage.getRandomPlayers(count);
-      res.json(players);
-    } catch (error) {
-      console.error("Error fetching random players:", error);
-      res.status(500).json({ error: "Failed to fetch players" });
     }
   });
 
