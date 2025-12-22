@@ -5,9 +5,23 @@ const API_BASE = import.meta.env.PROD
   : '';
 
 export async function getRandomPlayers(count: number = 10): Promise<Player[]> {
-  const response = await fetch(`${API_BASE}/api/players/random?count=${count}`);
-  if (!response.ok) throw new Error('Failed to fetch players');
-  return response.json();
+  const url = `${API_BASE}/api/players/random?count=${count}`;
+  console.log('🎮 Fetching random players from:', url);
+  try {
+    const response = await fetch(url);
+    console.log('✅ Response status:', response.status, response.statusText);
+    if (!response.ok) {
+      const text = await response.text();
+      console.error('❌ Response body:', text);
+      throw new Error(`Failed to fetch players: ${response.status} ${response.statusText}`);
+    }
+    const data = await response.json();
+    console.log('✅ Players loaded:', data.length);
+    return data;
+  } catch (error) {
+    console.error('❌ Network error fetching players:', error);
+    throw error;
+  }
 }
 
 export async function submitScore(playerName: string, totalScore: number): Promise<Score> {
