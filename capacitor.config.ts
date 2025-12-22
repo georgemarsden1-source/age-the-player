@@ -5,9 +5,7 @@ const config: CapacitorConfig = {
   appName: 'Age The Player',
   webDir: 'dist/public',
   server: {
-    androidScheme: 'https',
-    url: 'https://football-age--georgemarsden.replit.app',
-    cleartext: false
+    androidScheme: 'https'
   },
   ios: {
     contentInset: 'always'
