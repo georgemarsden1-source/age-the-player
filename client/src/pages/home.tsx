@@ -42,9 +42,10 @@ export default function Home() {
       setTimeout(() => {
         setLocation('/game');
       }, 50);
-    } catch (error) {
-      console.error('Failed to fetch players:', error);
-      toast.error('Failed to load players. Please try again.');
+    } catch (error: any) {
+      const errorMsg = error?.message || error?.toString() || 'Unknown error';
+      console.error('Failed to fetch players:', errorMsg);
+      toast.error(`Error: ${errorMsg}`);
       useGameStore.setState({ status: 'idle' });
       setIsLoading(false);
     }

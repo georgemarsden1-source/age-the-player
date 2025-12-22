@@ -1,25 +1,49 @@
 import type { Player, Score } from '@shared/schema';
+import { Capacitor } from '@capacitor/core';
 
 const API_BASE = import.meta.env.PROD 
   ? 'https://football-age--georgemarsden.replit.app' 
   : '';
 
+function nativeLog(message: string) {
+  console.log(message);
+  if (Capacitor.isNativePlatform()) {
+    (window as any).webkit?.messageHandlers?.bridge?.postMessage?.({
+      type: 'log',
+      message: message
+    });
+  }
+}
+
 export async function getRandomPlayers(count: number = 10): Promise<Player[]> {
   const url = `${API_BASE}/api/players/random?count=${count}`;
-  console.log('🎮 Fetching random players from:', url);
+  nativeLog(`API: Fetching from ${url}`);
+  
   try {
-    const response = await fetch(url);
-    console.log('✅ Response status:', response.status, response.statusText);
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
+    
+    const response = await fetch(url, { 
+      signal: controller.signal,
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      }
+    });
+    clearTimeout(timeoutId);
+    
+    nativeLog(`API: Response status ${response.status}`);
+    
     if (!response.ok) {
       const text = await response.text();
-      console.error('❌ Response body:', text);
+      nativeLog(`API: Error body ${text}`);
       throw new Error(`Failed to fetch players: ${response.status} ${response.statusText}`);
     }
     const data = await response.json();
-    console.log('✅ Players loaded:', data.length);
+    nativeLog(`API: Players loaded ${data.length}`);
     return data;
-  } catch (error) {
-    console.error('❌ Network error fetching players:', error);
+  } catch (error: any) {
+    nativeLog(`API: Error ${error.name} - ${error.message}`);
     throw error;
   }
 }
