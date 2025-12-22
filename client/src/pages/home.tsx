@@ -43,9 +43,9 @@ export default function Home() {
         setLocation('/game');
       }, 50);
     } catch (error: any) {
-      const errorMsg = error?.message || error?.toString() || 'Unknown error';
-      console.error('Failed to fetch players:', errorMsg);
-      toast.error(`Error: ${errorMsg}`);
+      const fullError = JSON.stringify(error, Object.getOwnPropertyNames(error));
+      console.error('Failed to fetch players:', fullError);
+      alert(`DEBUG ERROR:\n${fullError}`);
       useGameStore.setState({ status: 'idle' });
       setIsLoading(false);
     }
