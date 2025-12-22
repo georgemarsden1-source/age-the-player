@@ -68,7 +68,7 @@ export default function Home() {
             
             <div className="space-y-2">
               <h1 className="text-5xl font-display font-bold tracking-tighter text-white uppercase drop-shadow-md">
-                Age The Player
+                Age The Player v2
               </h1>
               <p className="text-muted-foreground text-lg">
                 Guess the footballer's age. <br/>
