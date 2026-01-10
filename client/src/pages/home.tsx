@@ -43,9 +43,9 @@ export default function Home() {
         setLocation('/game');
       }, 50);
     } catch (error: any) {
-      const fullError = JSON.stringify(error, Object.getOwnPropertyNames(error));
-      console.error('Failed to fetch players:', fullError);
-      alert(`DEBUG ERROR:\n${fullError}`);
+      const errorMsg = error?.message || error?.toString() || 'Unknown error';
+      console.error('Failed to fetch players:', errorMsg);
+      toast.error('Failed to load players. Please try again.');
       useGameStore.setState({ status: 'idle' });
       setIsLoading(false);
     }
@@ -68,7 +68,7 @@ export default function Home() {
             
             <div className="space-y-2">
               <h1 className="text-5xl font-display font-bold tracking-tighter text-white uppercase drop-shadow-md">
-                Age The Player v2
+                Age The Player
               </h1>
               <p className="text-muted-foreground text-lg">
                 Guess the footballer's age. <br/>
