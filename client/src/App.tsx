@@ -8,6 +8,7 @@ import Home from "@/pages/home";
 import Game from "@/pages/game";
 import Results from "@/pages/results";
 import SearchPage from "@/pages/search";
+import Privacy from "@/pages/privacy";
 
 function Router() {
   return (
@@ -16,6 +17,7 @@ function Router() {
       <Route path="/game" component={Game} />
       <Route path="/results" component={Results} />
       <Route path="/search" component={SearchPage} />
+      <Route path="/privacy" component={Privacy} />
       <Route component={NotFound} />
     </Switch>
   );
