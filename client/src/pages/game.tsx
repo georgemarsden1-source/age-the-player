@@ -171,14 +171,20 @@ export default function Game() {
               {footballer.name}
             </h2>
             <div className="flex flex-wrap justify-center items-center gap-2 text-sm">
-              {footballer.team && footballer.team !== 'Unknown' && (
+              {footballer.team && footballer.team !== 'Unknown' ? (
+                <>
+                  <span className="px-3 py-1.5 bg-white/10 text-white/90 font-medium rounded">
+                    {footballer.team}
+                  </span>
+                  {getLeague(footballer.team) && (
+                    <span className="px-3 py-1.5 bg-white/10 text-white/90 font-medium rounded">
+                      {getLeague(footballer.team)}
+                    </span>
+                  )}
+                </>
+              ) : (
                 <span className="px-3 py-1.5 bg-white/10 text-white/90 font-medium rounded">
-                  {footballer.team}
-                </span>
-              )}
-              {getLeague(footballer.team) && (
-                <span className="px-3 py-1.5 bg-white/10 text-white/90 font-medium rounded">
-                  {getLeague(footballer.team)}
+                  Retired
                 </span>
               )}
               <span className="px-3 py-1.5 bg-white/10 text-white/90 font-medium rounded">
