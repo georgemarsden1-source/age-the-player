@@ -9,6 +9,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import confetti from 'canvas-confetti';
 import { triggerHaptic, triggerSuccessHaptic, triggerErrorHaptic } from '@/lib/haptics';
 import { getCountryFlag } from '@/lib/flags';
+import { getLeague } from '@/lib/leagues';
 
 export default function Game() {
   const [, setLocation] = useLocation();
@@ -165,27 +166,28 @@ export default function Game() {
           style={{ transformStyle: "preserve-3d", perspective: 1000 }}
           className="w-full bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10"
         >
-          <div className="flex flex-col items-center text-center gap-4">
-            <div className="text-6xl">
-              {getCountryFlag(footballer.nationality)}
-            </div>
-            <div className="space-y-2">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-bold text-white uppercase leading-tight">
-                {footballer.name}
-              </h2>
-              <div className="flex flex-wrap justify-center items-center gap-2 text-sm">
-                {footballer.team && footballer.team !== 'Unknown' && (
-                  <span className="px-3 py-1 bg-secondary text-white font-bold uppercase tracking-wider rounded">
-                    {footballer.team}
-                  </span>
-                )}
-                <span className="px-3 py-1 bg-white/10 text-white/80 font-medium rounded">
-                  {footballer.position}
+          <div className="flex flex-col items-center text-center gap-5">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-display font-bold text-white uppercase leading-tight">
+              {footballer.name}
+            </h2>
+            <div className="flex flex-wrap justify-center items-center gap-2 text-sm">
+              {footballer.team && footballer.team !== 'Unknown' && (
+                <span className="px-3 py-1.5 bg-white/10 text-white/90 font-medium rounded">
+                  {footballer.team}
                 </span>
-                <span className="px-3 py-1 bg-white/10 text-white/80 font-medium rounded">
-                  {footballer.nationality}
+              )}
+              {getLeague(footballer.team) && (
+                <span className="px-3 py-1.5 bg-white/10 text-white/90 font-medium rounded">
+                  {getLeague(footballer.team)}
                 </span>
-              </div>
+              )}
+              <span className="px-3 py-1.5 bg-white/10 text-white/90 font-medium rounded">
+                {footballer.position}
+              </span>
+              <span className="px-3 py-1.5 bg-white/10 text-white/90 font-medium rounded flex items-center gap-1.5">
+                <span>{getCountryFlag(footballer.nationality)}</span>
+                <span>{footballer.nationality}</span>
+              </span>
             </div>
           </div>
         </motion.div>
