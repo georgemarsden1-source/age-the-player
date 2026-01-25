@@ -167,7 +167,7 @@ export default function Game() {
           className="w-full bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10"
         >
           <div className="flex flex-col items-center text-center gap-5">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-display font-bold text-white uppercase leading-tight">
+            <h2 className="text-4xl sm:text-5xl md:text-6xl font-display font-bold text-white uppercase leading-tight">
               {footballer.name}
             </h2>
             <div className="flex flex-wrap justify-center items-center gap-2 text-sm">
