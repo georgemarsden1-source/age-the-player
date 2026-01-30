@@ -40,21 +40,21 @@ export default function Home() {
               </Button>
 
               <Button 
-                onClick={() => setLocation('/search')}
-                variant="outline"
-                className="w-full py-6 border-white/20 text-white/90 hover:text-white hover:bg-white/10 font-display uppercase tracking-wider text-lg"
-                data-testid="button-search-players"
-              >
-                <Search className="mr-3 w-7 h-7" /> Search Players
-              </Button>
-
-              <Button 
                 onClick={() => setLocation('/rules')}
                 variant="outline"
                 className="w-full py-6 border-white/20 text-white/90 hover:text-white hover:bg-white/10 font-display uppercase tracking-wider text-lg"
                 data-testid="button-game-rules"
               >
                 <BookOpen className="mr-3 w-7 h-7" /> Game Rules
+              </Button>
+
+              <Button 
+                onClick={() => setLocation('/search')}
+                variant="outline"
+                className="w-full py-6 border-white/20 text-white/90 hover:text-white hover:bg-white/10 font-display uppercase tracking-wider text-lg"
+                data-testid="button-search-players"
+              >
+                <Search className="mr-3 w-7 h-7" /> Search Players
               </Button>
             </div>
           </div>
