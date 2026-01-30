@@ -36,7 +36,7 @@ export default function Home() {
                 className="w-full text-xl py-7 font-display uppercase tracking-widest bg-primary text-primary-foreground hover:bg-primary/90 transition-all hover:scale-[1.02]"
                 data-testid="button-classic-game"
               >
-                <Gamepad2 className="mr-3 w-6 h-6" /> Classic Game
+                <Gamepad2 className="mr-3 w-8 h-8" /> Classic Game
               </Button>
 
               <Button 
@@ -45,7 +45,7 @@ export default function Home() {
                 className="w-full py-6 border-white/20 text-white/90 hover:text-white hover:bg-white/10 font-display uppercase tracking-wider text-lg"
                 data-testid="button-search-players"
               >
-                <Search className="mr-3 w-5 h-5" /> Search Players
+                <Search className="mr-3 w-7 h-7" /> Search Players
               </Button>
 
               <Button 
@@ -54,7 +54,7 @@ export default function Home() {
                 className="w-full py-6 border-white/20 text-white/90 hover:text-white hover:bg-white/10 font-display uppercase tracking-wider text-lg"
                 data-testid="button-game-rules"
               >
-                <BookOpen className="mr-3 w-5 h-5" /> Game Rules
+                <BookOpen className="mr-3 w-7 h-7" /> Game Rules
               </Button>
             </div>
           </div>
