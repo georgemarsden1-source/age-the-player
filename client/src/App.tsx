@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/home";
 import ModeSelect from "@/pages/mode-select";
+import PlayersSetup from "@/pages/players-setup";
 import Setup from "@/pages/setup";
 import PackSelect from "@/pages/pack-select";
 import Loading from "@/pages/loading";
@@ -20,6 +21,7 @@ function Router() {
     <Switch>
       <Route path="/" component={Home} />
       <Route path="/mode" component={ModeSelect} />
+      <Route path="/players" component={PlayersSetup} />
       <Route path="/setup" component={Setup} />
       <Route path="/pack-select" component={PackSelect} />
       <Route path="/loading" component={Loading} />

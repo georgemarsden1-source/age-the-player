@@ -11,7 +11,11 @@ export default function ModeSelect() {
 
   const handleSelectMode = (mode: 'single' | 'multi') => {
     setGameMode(mode);
-    setLocation('/setup');
+    if (mode === 'multi') {
+      setLocation('/players');
+    } else {
+      setLocation('/setup');
+    }
   };
 
   return (
@@ -38,10 +42,6 @@ export default function ModeSelect() {
               </h2>
               <div className="w-16"></div>
             </div>
-
-            <p className="text-muted-foreground text-lg">
-              How do you want to play?
-            </p>
 
             <div className="w-full space-y-4">
               <Button 
