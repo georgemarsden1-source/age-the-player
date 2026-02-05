@@ -4,7 +4,7 @@ import { useGameStore } from '@/lib/store';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Slider } from '@/components/ui/slider';
-import { ArrowRight, ArrowLeft, Hash } from 'lucide-react';
+import { ArrowRight, ArrowLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function Setup() {
@@ -52,12 +52,9 @@ export default function Setup() {
 
             <div className="w-full space-y-3">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Hash className="w-4 h-4 text-primary" />
-                  <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                    Number of Rounds
-                  </span>
-                </div>
+                <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Number of Rounds
+                </span>
                 <span className="text-2xl font-display font-bold text-white">{numRounds}</span>
               </div>
               <Slider

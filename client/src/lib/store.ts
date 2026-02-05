@@ -94,11 +94,13 @@ export const useGameStore = create<GameState>((set, get) => ({
   },
 
   setFootballers: (players: Player[]) => {
+    const { sliderRange } = get();
+    const midPoint = Math.round((sliderRange.minAge + sliderRange.maxAge) / 2);
     set({ 
       footballers: players, 
       currentRoundGuesses: {},
       currentPlayerIndex: 0,
-      currentGuessValue: 25,
+      currentGuessValue: midPoint,
       status: 'playing' 
     });
   },
