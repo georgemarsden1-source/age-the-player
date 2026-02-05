@@ -1,7 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useLocation } from 'wouter';
 import { useGameStore } from '@/lib/store';
-import { getRandomPlayers } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
@@ -15,7 +14,13 @@ export default function Setup() {
   const [isLoading, setIsLoading] = useState(false);
   const [numRounds, setNumRounds] = useState(10);
   const [, setLocation] = useLocation();
-  const { humanPlayers, addPlayer, removePlayer, startGame, setFootballers } = useGameStore();
+  const { gameMode, humanPlayers, addPlayer, removePlayer } = useGameStore();
+
+  useEffect(() => {
+    if (gameMode === 'single' && humanPlayers.length === 0) {
+      addPlayer('Player');
+    }
+  }, [gameMode, humanPlayers.length, addPlayer]);
 
   const handleAddPlayer = (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,26 +34,10 @@ export default function Setup() {
     }
   };
 
-  const handleKickOff = async () => {
+  const handleKickOff = () => {
     if (humanPlayers.length === 0 || isLoading) return;
-    setIsLoading(true);
-    try {
-      startGame();
-      const players = await getRandomPlayers(numRounds);
-      if (!players || players.length === 0) {
-        throw new Error('No players available');
-      }
-      setFootballers(players);
-      setTimeout(() => {
-        setLocation('/game');
-      }, 50);
-    } catch (error: any) {
-      const errorMsg = error?.message || error?.toString() || 'Unknown error';
-      console.error('Failed to fetch players:', errorMsg);
-      toast.error('Failed to load players. Please try again.');
-      useGameStore.setState({ status: 'idle' });
-      setIsLoading(false);
-    }
+    sessionStorage.setItem('numRounds', numRounds.toString());
+    setLocation('/pack-select');
   };
 
   return (
@@ -63,7 +52,7 @@ export default function Setup() {
           <div className="flex flex-col items-center text-center space-y-6">
             <div className="w-full flex items-center justify-between mb-2">
               <button
-                onClick={() => setLocation('/')}
+                onClick={() => setLocation('/mode')}
                 className="text-white/60 hover:text-white transition-colors flex items-center gap-2"
                 data-testid="button-back"
               >
@@ -71,70 +60,74 @@ export default function Setup() {
                 <span className="text-sm uppercase tracking-wider">Back</span>
               </button>
               <h2 className="text-xl font-display font-bold text-white uppercase tracking-wider">
-                Game Setup
+                {gameMode === 'single' ? 'Single Player' : 'Multiplayer'}
               </h2>
               <div className="w-16"></div>
             </div>
 
-            <form onSubmit={handleAddPlayer} className="w-full space-y-4">
-              <div className="space-y-2 text-left">
-                <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground ml-1">
-                  Add Player
-                </label>
-                <div className="space-y-3">
-                  <Input
-                    type="text"
-                    placeholder="Enter your name..."
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    className="bg-background/50 border-white/10 text-lg py-6 focus-visible:ring-primary w-full"
-                    data-testid="input-player-name"
-                    disabled={isLoading}
-                  />
-                  <Button 
-                    type="submit" 
-                    className="w-full py-5 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-display uppercase tracking-wider"
-                    disabled={!name.trim() || isLoading}
-                    data-testid="button-add-player"
-                  >
-                    <UserPlus className="w-5 h-5 mr-2" /> Add to Game
-                  </Button>
-                </div>
-              </div>
-            </form>
-
-            {humanPlayers.length > 0 && (
-              <div className="w-full space-y-3">
-                <div className="flex items-center gap-2 text-left">
-                  <Users className="w-4 h-4 text-primary" />
-                  <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                    Players ({humanPlayers.length})
-                  </span>
-                </div>
-                <div className="space-y-2">
-                  <AnimatePresence>
-                    {humanPlayers.map((player, idx) => (
-                      <motion.div
-                        key={player}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: 20 }}
-                        className="flex items-center justify-between bg-white/5 border border-white/10 rounded-lg px-4 py-3"
-                        data-testid={`player-item-${idx}`}
+            {gameMode === 'multi' && (
+              <>
+                <form onSubmit={handleAddPlayer} className="w-full space-y-4">
+                  <div className="space-y-2 text-left">
+                    <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground ml-1">
+                      Add Player
+                    </label>
+                    <div className="space-y-3">
+                      <Input
+                        type="text"
+                        placeholder="Enter player name..."
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        className="bg-background/50 border-white/10 text-lg py-6 focus-visible:ring-primary w-full"
+                        data-testid="input-player-name"
+                        disabled={isLoading}
+                      />
+                      <Button 
+                        type="submit" 
+                        className="w-full py-5 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-display uppercase tracking-wider"
+                        disabled={!name.trim() || isLoading}
+                        data-testid="button-add-player"
                       >
-                        <span className="text-white font-medium">{player}</span>
-                        <button
-                          onClick={() => removePlayer(player)}
-                          className="text-white/40 hover:text-destructive transition-colors"
-                          data-testid={`button-remove-player-${idx}`}
-                        >
-                          <X className="w-4 h-4" />
-                        </button>
-                      </motion.div>
-                    ))}
-                  </AnimatePresence>
-                </div>
-              </div>
+                        <UserPlus className="w-5 h-5 mr-2" /> Add to Game
+                      </Button>
+                    </div>
+                  </div>
+                </form>
+
+                {humanPlayers.length > 0 && (
+                  <div className="w-full space-y-3">
+                    <div className="flex items-center gap-2 text-left">
+                      <Users className="w-4 h-4 text-primary" />
+                      <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                        Players ({humanPlayers.length})
+                      </span>
+                    </div>
+                    <div className="space-y-2">
+                      <AnimatePresence>
+                        {humanPlayers.map((player, idx) => (
+                          <motion.div
+                            key={player}
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: 20 }}
+                            className="flex items-center justify-between bg-white/5 border border-white/10 rounded-lg px-4 py-3"
+                            data-testid={`player-item-${idx}`}
+                          >
+                            <span className="text-white font-medium">{player}</span>
+                            <button
+                              onClick={() => removePlayer(player)}
+                              className="text-white/40 hover:text-destructive transition-colors"
+                              data-testid={`button-remove-player-${idx}`}
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                          </motion.div>
+                        ))}
+                      </AnimatePresence>
+                    </div>
+                  </div>
+                )}
+              </>
             )}
 
             <div className="w-full space-y-3">
@@ -166,7 +159,7 @@ export default function Setup() {
             <Button 
               onClick={handleKickOff}
               className="w-full text-xl py-6 font-display uppercase tracking-widest bg-primary text-primary-foreground hover:bg-primary/90 transition-all hover:scale-[1.02]"
-              disabled={humanPlayers.length === 0 || isLoading}
+              disabled={(gameMode === 'multi' && humanPlayers.length === 0) || isLoading}
               data-testid="button-start-game"
             >
               {isLoading ? 'Loading...' : 'Kick Off'} <ArrowRight className="ml-2 w-5 h-5" />

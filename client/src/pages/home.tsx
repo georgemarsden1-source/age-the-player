@@ -32,7 +32,7 @@ export default function Home() {
 
             <div className="w-full space-y-4 pt-4">
               <Button 
-                onClick={() => setLocation('/setup')}
+                onClick={() => setLocation('/mode')}
                 className="w-full text-xl py-7 font-display uppercase tracking-widest bg-primary text-primary-foreground hover:bg-primary/90 transition-all hover:scale-[1.02]"
                 data-testid="button-classic-game"
               >

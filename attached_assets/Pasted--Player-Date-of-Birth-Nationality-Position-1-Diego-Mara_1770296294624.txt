@@ -1,0 +1,51 @@
+#	Player	Date of Birth	Nationality	Position
+1	Diego Maradona	30 Oct 1960	Argentina	Attacking Midfielder / Forward
+2	Michel Platini	21 Jun 1955	France	Attacking Midfielder
+3	Zico	3 Mar 1953	Brazil	Attacking Midfielder
+4	Marco van Basten	31 Oct 1964	Netherlands	Striker
+5	Ruud Gullit	1 Sep 1962	Netherlands	Midfielder / Forward
+6	Franco Baresi	8 May 1960	Italy	Centre-back
+7	Karl-Heinz Rummenigge	25 Sep 1955	Germany	Forward
+8	Paolo Maldini	26 Jun 1968	Italy	Left-back / Centre-back
+9	Lothar Matthäus	21 Mar 1961	Germany	Midfielder
+10	Sócrates	19 Feb 1954	Brazil	Midfielder
+11	Gary Lineker	30 Nov 1960	England	Striker
+12	Hugo Sánchez	11 Jul 1958	Mexico	Striker
+13	Kenny Dalglish	4 Mar 1951	Scotland	Forward
+14	Alessandro Altobelli	28 Nov 1955	Italy	Striker
+15	Preben Elkjær	11 Sep 1957	Denmark	Striker
+16	Ian Rush	20 Oct 1961	Wales	Striker
+17	Bryan Robson	11 Jan 1957	England	Midfielder
+18	Michael Laudrup	15 Jun 1964	Denmark	Attacking Midfielder
+19	Jean Tigana	23 Jun 1955	France	Midfielder
+20	Gaetano Scirea	25 May 1953	Italy	Sweeper
+21	Careca	5 Oct 1960	Brazil	Striker
+22	Rudi Völler	13 Apr 1960	Germany	Forward
+23	Peter Shilton	18 Sep 1949	England	Goalkeeper
+24	Dino Zoff	28 Feb 1942	Italy	Goalkeeper
+25	Graeme Souness	6 May 1953	Scotland	Midfielder
+26	Frank Rijkaard	30 Sep 1962	Netherlands	Defensive Midfielder
+27	Bernd Schuster	22 Dec 1959	Germany	Midfielder
+28	José Antonio Camacho	8 Jun 1955	Spain	Left-back
+29	Emilio Butragueño	22 Jul 1963	Spain	Forward
+30	Claudio Gentile	27 Sep 1953	Italy	Defender
+31	Trevor Francis	19 Apr 1954	England	Forward
+32	Jean-Pierre Papin	5 Nov 1963	France	Striker
+33	Eric Cantona	24 May 1966	France	Forward
+34	Walter Zenga	28 Apr 1960	Italy	Goalkeeper
+35	Andreas Brehme	9 Nov 1960	Germany	Full-back
+36	Jürgen Klinsmann	30 Jul 1964	Germany	Striker
+37	Fernando Chalana	10 Feb 1959	Portugal	Winger
+38	Enzo Scifo	19 Feb 1966	Belgium	Attacking Midfielder
+39	Mark Hughes	1 Nov 1963	Wales	Forward
+40	Gheorghe Hagi	5 Feb 1965	Romania	Attacking Midfielder
+41	Zbigniew Boniek	3 Mar 1956	Poland	Midfielder
+42	Oleg Blokhin	5 Nov 1952	USSR	Forward
+43	René Higuita	27 Aug 1966	Colombia	Goalkeeper
+44	Ray Wilkins	14 Sep 1956	England	Midfielder
+45	Paul Breitner	5 Sep 1951	Germany	Midfielder
+46	Roberto Baggio	18 Feb 1967	Italy	Attacking Midfielder
+47	Carlos Valderrama	2 Sep 1961	Colombia	Midfielder
+48	Harald Schumacher	6 Mar 1954	Germany	Goalkeeper
+49	Jean-Marie Pfaff	4 Dec 1953	Belgium	Goalkeeper
+50	Manuel Amoros	1 Feb 1962	France	Defender

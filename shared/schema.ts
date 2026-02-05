@@ -28,6 +28,7 @@ export const players = pgTable("players", {
   position: text("position").notNull(),
   overallRating: integer("overall_rating").notNull(),
   imageUrl: text("image_url"),
+  pack: text("pack").default("modern"),
 });
 
 export const scores = pgTable("scores", {

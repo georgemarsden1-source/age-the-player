@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import type { Player } from '@shared/schema';
 
 export type GameStatus = 'idle' | 'loading' | 'playing' | 'round-feedback' | 'finished';
+export type GameMode = 'single' | 'multi';
 
 export interface RoundGuess {
   humanPlayerName: string;
@@ -18,6 +19,8 @@ export interface RoundResult {
 }
 
 interface GameState {
+  gameMode: GameMode;
+  selectedPack: string;
   humanPlayers: string[];
   footballers: Player[];
   currentRound: number;
@@ -28,6 +31,8 @@ interface GameState {
   currentGuessValue: number;
   status: GameStatus;
   
+  setGameMode: (mode: GameMode) => void;
+  setSelectedPack: (pack: string) => void;
   addPlayer: (name: string) => boolean;
   removePlayer: (name: string) => void;
   setFootballers: (players: Player[]) => void;
@@ -39,6 +44,8 @@ interface GameState {
 }
 
 export const useGameStore = create<GameState>((set, get) => ({
+  gameMode: 'single',
+  selectedPack: 'modern',
   humanPlayers: [],
   footballers: [],
   currentRound: 0,
@@ -48,6 +55,14 @@ export const useGameStore = create<GameState>((set, get) => ({
   playerScores: {},
   currentGuessValue: 25,
   status: 'idle',
+
+  setGameMode: (mode: GameMode) => {
+    set({ gameMode: mode });
+  },
+
+  setSelectedPack: (pack: string) => {
+    set({ selectedPack: pack });
+  },
 
   addPlayer: (name: string) => {
     const { humanPlayers } = get();
@@ -172,6 +187,8 @@ export const useGameStore = create<GameState>((set, get) => ({
   },
 
   resetGame: () => set({
+    gameMode: 'single',
+    selectedPack: 'modern',
     humanPlayers: [],
     footballers: [],
     currentRound: 0,

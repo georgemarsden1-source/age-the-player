@@ -98,7 +98,7 @@ export interface IStorage {
   createUser(user: InsertUser): Promise<User>;
   
   // Player methods
-  getRandomPlayers(count: number): Promise<Player[]>;
+  getRandomPlayers(count: number, pack?: string): Promise<Player[]>;
   getPlayerById(id: number): Promise<Player | undefined>;
   searchPlayersByName(query: string, limit?: number): Promise<Player[]>;
   
@@ -125,7 +125,16 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Player methods
-  async getRandomPlayers(count: number): Promise<Player[]> {
+  async getRandomPlayers(count: number, pack?: string): Promise<Player[]> {
+    if (pack && pack !== 'all') {
+      const result = await db
+        .select()
+        .from(players)
+        .where(eq(players.pack, pack))
+        .orderBy(sql`RANDOM()`)
+        .limit(count);
+      return result;
+    }
     const result = await db
       .select()
       .from(players)
