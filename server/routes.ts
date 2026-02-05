@@ -20,6 +20,18 @@ export async function registerRoutes(
     }
   });
 
+  // Get pack age range for slider
+  app.get("/api/packs/:pack/age-range", async (req, res) => {
+    try {
+      const pack = req.params.pack;
+      const range = await storage.getPackAgeRange(pack);
+      res.json(range);
+    } catch (error) {
+      console.error("Error fetching pack age range:", error);
+      res.status(500).json({ error: "Failed to fetch age range" });
+    }
+  });
+
   // Search players by name
   app.get("/api/players/search", async (req, res) => {
     try {

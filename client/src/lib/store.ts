@@ -21,6 +21,7 @@ export interface RoundResult {
 interface GameState {
   gameMode: GameMode;
   selectedPack: string;
+  sliderRange: { minAge: number; maxAge: number };
   humanPlayers: string[];
   footballers: Player[];
   currentRound: number;
@@ -33,6 +34,7 @@ interface GameState {
   
   setGameMode: (mode: GameMode) => void;
   setSelectedPack: (pack: string) => void;
+  setSliderRange: (range: { minAge: number; maxAge: number }) => void;
   addPlayer: (name: string) => boolean;
   removePlayer: (name: string) => void;
   setFootballers: (players: Player[]) => void;
@@ -46,6 +48,7 @@ interface GameState {
 export const useGameStore = create<GameState>((set, get) => ({
   gameMode: 'single',
   selectedPack: 'modern',
+  sliderRange: { minAge: 15, maxAge: 52 },
   humanPlayers: [],
   footballers: [],
   currentRound: 0,
@@ -62,6 +65,11 @@ export const useGameStore = create<GameState>((set, get) => ({
 
   setSelectedPack: (pack: string) => {
     set({ selectedPack: pack });
+  },
+
+  setSliderRange: (range: { minAge: number; maxAge: number }) => {
+    const midPoint = Math.round((range.minAge + range.maxAge) / 2);
+    set({ sliderRange: range, currentGuessValue: midPoint });
   },
 
   addPlayer: (name: string) => {
@@ -134,10 +142,12 @@ export const useGameStore = create<GameState>((set, get) => ({
     const newGuesses = { ...currentRoundGuesses, [currentPlayer]: currentGuessValue };
     
     if (currentPlayerIndex < humanPlayers.length - 1) {
+      const { sliderRange } = get();
+      const midPoint = Math.round((sliderRange.minAge + sliderRange.maxAge) / 2);
       set({
         currentRoundGuesses: newGuesses,
         currentPlayerIndex: currentPlayerIndex + 1,
-        currentGuessValue: 25
+        currentGuessValue: midPoint
       });
     } else {
       const guesses: RoundGuess[] = [];
@@ -172,15 +182,16 @@ export const useGameStore = create<GameState>((set, get) => ({
   },
 
   nextRound: () => {
-    const { currentRound, footballers } = get();
+    const { currentRound, footballers, sliderRange } = get();
     if (currentRound >= footballers.length - 1) {
       set({ status: 'finished' });
     } else {
+      const midPoint = Math.round((sliderRange.minAge + sliderRange.maxAge) / 2);
       set({ 
         currentRound: currentRound + 1,
         currentPlayerIndex: 0,
         currentRoundGuesses: {},
-        currentGuessValue: 25,
+        currentGuessValue: midPoint,
         status: 'playing'
       });
     }
@@ -189,6 +200,7 @@ export const useGameStore = create<GameState>((set, get) => ({
   resetGame: () => set({
     gameMode: 'single',
     selectedPack: 'modern',
+    sliderRange: { minAge: 15, maxAge: 52 },
     humanPlayers: [],
     footballers: [],
     currentRound: 0,

@@ -1,6 +1,6 @@
 import { useLocation } from 'wouter';
 import { useGameStore } from '@/lib/store';
-import { getRandomPlayers } from '@/lib/api';
+import { getRandomPlayers, getPackAgeRange } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { ArrowLeft, Package, Star, Clock, Trophy } from 'lucide-react';
@@ -57,7 +57,7 @@ const packs = [
 
 export default function PackSelect() {
   const [, setLocation] = useLocation();
-  const { setSelectedPack, startGame, setFootballers, humanPlayers } = useGameStore();
+  const { setSelectedPack, setSliderRange, startGame, setFootballers } = useGameStore();
   const numRounds = useGameStore((state) => state.footballers.length || 10);
 
   const handleSelectPack = async (packId: string) => {
@@ -68,10 +68,17 @@ export default function PackSelect() {
     try {
       const storedRounds = sessionStorage.getItem('numRounds');
       const rounds = storedRounds ? parseInt(storedRounds) : 10;
-      const players = await getRandomPlayers(rounds, packId);
+      
+      const [players, ageRange] = await Promise.all([
+        getRandomPlayers(rounds, packId),
+        getPackAgeRange(packId)
+      ]);
+      
       if (!players || players.length === 0) {
         throw new Error('No players available in this pack');
       }
+      
+      setSliderRange(ageRange);
       setFootballers(players);
     } catch (error: any) {
       const errorMsg = error?.message || error?.toString() || 'Unknown error';

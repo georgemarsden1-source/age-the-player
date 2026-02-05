@@ -25,7 +25,8 @@ export default function Game() {
     currentGuessValue,
     setCurrentGuess,
     playerScores,
-    resetGame
+    resetGame,
+    sliderRange
   } = useGameStore();
 
   const [showQuitConfirm, setShowQuitConfirm] = useState(false);
@@ -230,8 +231,8 @@ export default function Game() {
                 <Slider
                   value={[currentGuessValue]}
                   onValueChange={(vals) => setCurrentGuess(vals[0])}
-                  min={16}
-                  max={45}
+                  min={sliderRange.minAge}
+                  max={sliderRange.maxAge}
                   step={1}
                   className="py-6"
                   data-testid="slider-age"

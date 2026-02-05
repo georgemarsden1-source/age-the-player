@@ -1,6 +1,6 @@
 import { drizzle } from "drizzle-orm/node-postgres";
 import pg from "pg";
-import { eq, asc, sql, count, ilike } from "drizzle-orm";
+import { eq, asc, sql, count, ilike, min, max } from "drizzle-orm";
 import { 
   type User, 
   type InsertUser,
@@ -105,6 +105,9 @@ export interface IStorage {
   // Score methods
   createScore(score: InsertScore): Promise<Score>;
   getTopScores(limit: number): Promise<Score[]>;
+  
+  // Pack methods
+  getPackAgeRange(pack: string): Promise<{ minAge: number; maxAge: number }>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -170,6 +173,21 @@ export class DatabaseStorage implements IStorage {
       .from(scores)
       .orderBy(asc(scores.totalScore))
       .limit(limit);
+  }
+
+  async getPackAgeRange(pack: string): Promise<{ minAge: number; maxAge: number }> {
+    const query = pack && pack !== 'all' 
+      ? db.select({ minAge: min(players.age), maxAge: max(players.age) }).from(players).where(eq(players.pack, pack))
+      : db.select({ minAge: min(players.age), maxAge: max(players.age) }).from(players);
+    
+    const result = await query;
+    const minAge = result[0]?.minAge ?? 16;
+    const maxAge = result[0]?.maxAge ?? 45;
+    
+    return {
+      minAge: minAge - 1,
+      maxAge: maxAge + 5
+    };
   }
 }
 

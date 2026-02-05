@@ -55,3 +55,9 @@ export async function getPlayerById(id: number): Promise<Player> {
   if (!response.ok) throw new Error('Failed to fetch player');
   return response.json();
 }
+
+export async function getPackAgeRange(pack: string): Promise<{ minAge: number; maxAge: number }> {
+  const response = await fetch(`${API_BASE}/api/packs/${encodeURIComponent(pack)}/age-range`);
+  if (!response.ok) throw new Error('Failed to fetch age range');
+  return response.json();
+}
