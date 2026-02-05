@@ -1,6 +1,6 @@
 import type { Player, Score } from '@shared/schema';
 
-const API_BASE = 'https://football-age--georgemarsden.replit.app';
+const API_BASE = '';
 
 export async function getRandomPlayers(count: number = 10, pack: string = 'modern'): Promise<Player[]> {
   const url = `${API_BASE}/api/players/random?count=${count}&pack=${encodeURIComponent(pack)}`;
